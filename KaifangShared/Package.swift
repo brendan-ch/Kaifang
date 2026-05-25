@@ -19,7 +19,7 @@ let package = Package(
     targets: [
         .target(
             name: "KaifangCore",
-            resources: [.process("Kaifang.xcdatamodeld")]
+            resources: [.process("KaifangModel.xcdatamodeld")]
         ),
         .target(
             name: "KaifangPresentation",
