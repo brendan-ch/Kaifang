@@ -8,5 +8,5 @@
 import CoreData
 
 @objc(CDCachedTranslation)
-public class CDCachedTranslation: NSManagedObject {
+public class CDCachedTranslation: CDEntityWithDateMetadata {
 }

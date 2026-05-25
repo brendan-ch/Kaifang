@@ -8,5 +8,5 @@
 import CoreData
 
 @objc(CDArticleSentenceToken)
-public class CDArticleSentenceToken: NSManagedObject {
+public class CDArticleSentenceToken: CDEntityWithDateMetadata {
 }

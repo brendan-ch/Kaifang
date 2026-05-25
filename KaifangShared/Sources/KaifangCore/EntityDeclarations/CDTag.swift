@@ -8,5 +8,5 @@
 import CoreData
 
 @objc(CDTag)
-public class CDTag: NSManagedObject {
+public class CDTag: CDEntityWithDateMetadata {
 }
