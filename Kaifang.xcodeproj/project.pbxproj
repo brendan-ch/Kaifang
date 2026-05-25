@@ -6,6 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		209990E32FC4FC2800C5A4E0 /* KaifangCore in Frameworks */ = {isa = PBXBuildFile; productRef = 209990E22FC4FC2800C5A4E0 /* KaifangCore */; };
+		209990E52FC4FC2800C5A4E0 /* KaifangPresentation in Frameworks */ = {isa = PBXBuildFile; productRef = 209990E42FC4FC2800C5A4E0 /* KaifangPresentation */; };
+		209990E72FC4FC3100C5A4E0 /* KaifangCore in Frameworks */ = {isa = PBXBuildFile; productRef = 209990E62FC4FC3100C5A4E0 /* KaifangCore */; };
+		209990E92FC4FC3100C5A4E0 /* KaifangPresentation in Frameworks */ = {isa = PBXBuildFile; productRef = 209990E82FC4FC3100C5A4E0 /* KaifangPresentation */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		2056FDA92FBBEF2400B4AD3D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -21,12 +28,30 @@
 			remoteGlobalIDString = 2056FD8D2FBBEF2200B4AD3D;
 			remoteInfo = Kaifang;
 		};
+		209990C62FC4FAC200C5A4E0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2056FD862FBBEF2200B4AD3D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 209990B22FC4FABF00C5A4E0;
+			remoteInfo = "Kaifang-Mac";
+		};
+		209990D02FC4FAC200C5A4E0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2056FD862FBBEF2200B4AD3D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 209990B22FC4FABF00C5A4E0;
+			remoteInfo = "Kaifang-Mac";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		2056FD8E2FBBEF2200B4AD3D /* Kaifang.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Kaifang.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2056FDA82FBBEF2400B4AD3D /* KaifangTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KaifangTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2056FDB22FBBEF2400B4AD3D /* KaifangUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KaifangUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		209990B32FC4FABF00C5A4E0 /* Kaifang-Mac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Kaifang-Mac.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		209990C52FC4FAC200C5A4E0 /* Kaifang-MacTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Kaifang-MacTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		209990CF2FC4FAC200C5A4E0 /* Kaifang-MacUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Kaifang-MacUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		209990E02FC4FB2400C5A4E0 /* KaifangShared */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = KaifangShared; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -58,6 +83,21 @@
 			path = KaifangUITests;
 			sourceTree = "<group>";
 		};
+		209990B42FC4FABF00C5A4E0 /* Kaifang-Mac */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Kaifang-Mac";
+			sourceTree = "<group>";
+		};
+		209990C82FC4FAC200C5A4E0 /* Kaifang-MacTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Kaifang-MacTests";
+			sourceTree = "<group>";
+		};
+		209990D22FC4FAC200C5A4E0 /* Kaifang-MacUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Kaifang-MacUITests";
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,6 +105,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				209990E52FC4FC2800C5A4E0 /* KaifangPresentation in Frameworks */,
+				209990E32FC4FC2800C5A4E0 /* KaifangCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -82,15 +124,43 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		209990B02FC4FABF00C5A4E0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				209990E92FC4FC3100C5A4E0 /* KaifangPresentation in Frameworks */,
+				209990E72FC4FC3100C5A4E0 /* KaifangCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		209990C22FC4FAC200C5A4E0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		209990CC2FC4FAC200C5A4E0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		2056FD852FBBEF2200B4AD3D = {
 			isa = PBXGroup;
 			children = (
+				209990E02FC4FB2400C5A4E0 /* KaifangShared */,
 				2056FD902FBBEF2200B4AD3D /* Kaifang */,
 				2056FDAB2FBBEF2400B4AD3D /* KaifangTests */,
 				2056FDB52FBBEF2400B4AD3D /* KaifangUITests */,
+				209990B42FC4FABF00C5A4E0 /* Kaifang-Mac */,
+				209990C82FC4FAC200C5A4E0 /* Kaifang-MacTests */,
+				209990D22FC4FAC200C5A4E0 /* Kaifang-MacUITests */,
+				209990E12FC4FC2800C5A4E0 /* Frameworks */,
 				2056FD8F2FBBEF2200B4AD3D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -101,8 +171,18 @@
 				2056FD8E2FBBEF2200B4AD3D /* Kaifang.app */,
 				2056FDA82FBBEF2400B4AD3D /* KaifangTests.xctest */,
 				2056FDB22FBBEF2400B4AD3D /* KaifangUITests.xctest */,
+				209990B32FC4FABF00C5A4E0 /* Kaifang-Mac.app */,
+				209990C52FC4FAC200C5A4E0 /* Kaifang-MacTests.xctest */,
+				209990CF2FC4FAC200C5A4E0 /* Kaifang-MacUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		209990E12FC4FC2800C5A4E0 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -125,6 +205,8 @@
 			);
 			name = Kaifang;
 			packageProductDependencies = (
+				209990E22FC4FC2800C5A4E0 /* KaifangCore */,
+				209990E42FC4FC2800C5A4E0 /* KaifangPresentation */,
 			);
 			productName = Kaifang;
 			productReference = 2056FD8E2FBBEF2200B4AD3D /* Kaifang.app */;
@@ -176,6 +258,76 @@
 			productReference = 2056FDB22FBBEF2400B4AD3D /* KaifangUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		209990B22FC4FABF00C5A4E0 /* Kaifang-Mac */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 209990DD2FC4FAC200C5A4E0 /* Build configuration list for PBXNativeTarget "Kaifang-Mac" */;
+			buildPhases = (
+				209990AF2FC4FABF00C5A4E0 /* Sources */,
+				209990B02FC4FABF00C5A4E0 /* Frameworks */,
+				209990B12FC4FABF00C5A4E0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				209990B42FC4FABF00C5A4E0 /* Kaifang-Mac */,
+			);
+			name = "Kaifang-Mac";
+			packageProductDependencies = (
+				209990E62FC4FC3100C5A4E0 /* KaifangCore */,
+				209990E82FC4FC3100C5A4E0 /* KaifangPresentation */,
+			);
+			productName = "Kaifang-Mac";
+			productReference = 209990B32FC4FABF00C5A4E0 /* Kaifang-Mac.app */;
+			productType = "com.apple.product-type.application";
+		};
+		209990C42FC4FAC200C5A4E0 /* Kaifang-MacTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 209990DE2FC4FAC200C5A4E0 /* Build configuration list for PBXNativeTarget "Kaifang-MacTests" */;
+			buildPhases = (
+				209990C12FC4FAC200C5A4E0 /* Sources */,
+				209990C22FC4FAC200C5A4E0 /* Frameworks */,
+				209990C32FC4FAC200C5A4E0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				209990C72FC4FAC200C5A4E0 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				209990C82FC4FAC200C5A4E0 /* Kaifang-MacTests */,
+			);
+			name = "Kaifang-MacTests";
+			packageProductDependencies = (
+			);
+			productName = "Kaifang-MacTests";
+			productReference = 209990C52FC4FAC200C5A4E0 /* Kaifang-MacTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		209990CE2FC4FAC200C5A4E0 /* Kaifang-MacUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 209990DF2FC4FAC200C5A4E0 /* Build configuration list for PBXNativeTarget "Kaifang-MacUITests" */;
+			buildPhases = (
+				209990CB2FC4FAC200C5A4E0 /* Sources */,
+				209990CC2FC4FAC200C5A4E0 /* Frameworks */,
+				209990CD2FC4FAC200C5A4E0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				209990D12FC4FAC200C5A4E0 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				209990D22FC4FAC200C5A4E0 /* Kaifang-MacUITests */,
+			);
+			name = "Kaifang-MacUITests";
+			packageProductDependencies = (
+			);
+			productName = "Kaifang-MacUITests";
+			productReference = 209990CF2FC4FAC200C5A4E0 /* Kaifang-MacUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -197,6 +349,17 @@
 						CreatedOnToolsVersion = 26.5;
 						TestTargetID = 2056FD8D2FBBEF2200B4AD3D;
 					};
+					209990B22FC4FABF00C5A4E0 = {
+						CreatedOnToolsVersion = 26.5;
+					};
+					209990C42FC4FAC200C5A4E0 = {
+						CreatedOnToolsVersion = 26.5;
+						TestTargetID = 209990B22FC4FABF00C5A4E0;
+					};
+					209990CE2FC4FAC200C5A4E0 = {
+						CreatedOnToolsVersion = 26.5;
+						TestTargetID = 209990B22FC4FABF00C5A4E0;
+					};
 				};
 			};
 			buildConfigurationList = 2056FD892FBBEF2200B4AD3D /* Build configuration list for PBXProject "Kaifang" */;
@@ -216,6 +379,9 @@
 				2056FD8D2FBBEF2200B4AD3D /* Kaifang */,
 				2056FDA72FBBEF2400B4AD3D /* KaifangTests */,
 				2056FDB12FBBEF2400B4AD3D /* KaifangUITests */,
+				209990B22FC4FABF00C5A4E0 /* Kaifang-Mac */,
+				209990C42FC4FAC200C5A4E0 /* Kaifang-MacTests */,
+				209990CE2FC4FAC200C5A4E0 /* Kaifang-MacUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -236,6 +402,27 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		2056FDB02FBBEF2400B4AD3D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		209990B12FC4FABF00C5A4E0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		209990C32FC4FAC200C5A4E0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		209990CD2FC4FAC200C5A4E0 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -266,6 +453,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		209990AF2FC4FABF00C5A4E0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		209990C12FC4FAC200C5A4E0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		209990CB2FC4FAC200C5A4E0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -278,6 +486,16 @@
 			isa = PBXTargetDependency;
 			target = 2056FD8D2FBBEF2200B4AD3D /* Kaifang */;
 			targetProxy = 2056FDB32FBBEF2400B4AD3D /* PBXContainerItemProxy */;
+		};
+		209990C72FC4FAC200C5A4E0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 209990B22FC4FABF00C5A4E0 /* Kaifang-Mac */;
+			targetProxy = 209990C62FC4FAC200C5A4E0 /* PBXContainerItemProxy */;
+		};
+		209990D12FC4FAC200C5A4E0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 209990B22FC4FABF00C5A4E0 /* Kaifang-Mac */;
+			targetProxy = 209990D02FC4FAC200C5A4E0 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -553,6 +771,162 @@
 			};
 			name = Release;
 		};
+		209990D72FC4FAC200C5A4E0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4A9XHUS87Q;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 26.3;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "dev.bchen.Kaifang-Mac";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		209990D82FC4FAC200C5A4E0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4A9XHUS87Q;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 26.3;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "dev.bchen.Kaifang-Mac";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		209990D92FC4FAC200C5A4E0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4A9XHUS87Q;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.3;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "dev.bchen.Kaifang-MacTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Kaifang-Mac.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Kaifang-Mac";
+			};
+			name = Debug;
+		};
+		209990DA2FC4FAC200C5A4E0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4A9XHUS87Q;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.3;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "dev.bchen.Kaifang-MacTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Kaifang-Mac.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Kaifang-Mac";
+			};
+			name = Release;
+		};
+		209990DB2FC4FAC200C5A4E0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4A9XHUS87Q;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.3;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "dev.bchen.Kaifang-MacUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = "Kaifang-Mac";
+			};
+			name = Debug;
+		};
+		209990DC2FC4FAC200C5A4E0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4A9XHUS87Q;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.3;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "dev.bchen.Kaifang-MacUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = "Kaifang-Mac";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -592,7 +966,53 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		209990DD2FC4FAC200C5A4E0 /* Build configuration list for PBXNativeTarget "Kaifang-Mac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				209990D72FC4FAC200C5A4E0 /* Debug */,
+				209990D82FC4FAC200C5A4E0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		209990DE2FC4FAC200C5A4E0 /* Build configuration list for PBXNativeTarget "Kaifang-MacTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				209990D92FC4FAC200C5A4E0 /* Debug */,
+				209990DA2FC4FAC200C5A4E0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		209990DF2FC4FAC200C5A4E0 /* Build configuration list for PBXNativeTarget "Kaifang-MacUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				209990DB2FC4FAC200C5A4E0 /* Debug */,
+				209990DC2FC4FAC200C5A4E0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		209990E22FC4FC2800C5A4E0 /* KaifangCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = KaifangCore;
+		};
+		209990E42FC4FC2800C5A4E0 /* KaifangPresentation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = KaifangPresentation;
+		};
+		209990E62FC4FC3100C5A4E0 /* KaifangCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = KaifangCore;
+		};
+		209990E82FC4FC3100C5A4E0 /* KaifangPresentation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = KaifangPresentation;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 2056FD862FBBEF2200B4AD3D /* Project object */;
 }
