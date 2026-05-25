@@ -5,6 +5,7 @@
         <attribute name="sentenceIndex" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="tokenText" optional="YES" attributeType="String"/>
         <relationship name="article" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDBaseArticle" inverseName="sentenceTokens" inverseEntity="CDBaseArticle"/>
+        <relationship name="flashcards" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CDFlashcard" inverseName="sentenceToken" inverseEntity="CDFlashcard"/>
     </entity>
     <entity name="CDArticleWordToken" representedClassName="CDArticleWordToken" parentEntity="CDEntityWithDateMetadata" syncable="YES" codeGenerationType="category">
         <attribute name="articlePlainTextIndexEnd" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
@@ -40,6 +41,7 @@
         <attribute name="originalArticleText" optional="YES" attributeType="String" allowsCloudEncryption="YES"/>
         <attribute name="originalWord" attributeType="String" defaultValueString="Empty word" allowsCloudEncryption="YES"/>
         <attribute name="repetitions" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="sentenceToken" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDArticleSentenceToken" inverseName="flashcards" inverseEntity="CDArticleSentenceToken"/>
     </entity>
     <entity name="CDTag" representedClassName="CDTag" parentEntity="CDEntityWithDateMetadata" syncable="YES" codeGenerationType="category">
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
