@@ -10,10 +10,11 @@ import Testing
 
 struct CDEntityWithDateMetadataTests {
     @Test("Subclass of CDEntityWithDateMetadata is populated with date metadata")
-    func subclassHasDateMetadata() async throws {
+    func subclassHasDateMetadataCorrectlySet() async throws {
         let context = PersistenceController.getTestingContext()
 
         let article = CDBaseArticle(context: context)
         #expect(article.dateCreated != nil)
+        #expect(article.dateCreated!.isCloseToNow())
     }
 }

@@ -15,8 +15,6 @@ struct CDFlashcardTests {
         
         let card = CDFlashcard(context: context)
         #expect(card.dueDate != nil)
-        
-        let deltaSeconds = abs(card.dueDate!.timeIntervalSinceNow)
-        #expect(deltaSeconds < 0.5)
+        #expect(card.dueDate!.isCloseToNow())
     }
 }
