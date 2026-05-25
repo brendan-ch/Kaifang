@@ -28,6 +28,14 @@
         <relationship name="tags" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CDTag" inverseName="articles" inverseEntity="CDTag"/>
         <relationship name="wordTokens" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="CDArticleWordToken" inverseName="article" inverseEntity="CDArticleWordToken"/>
     </entity>
+    <entity name="CDCachedTranslation" representedClassName="CDCachedTranslation" parentEntity="CDEntityWithDateMetadata" syncable="YES" codeGenerationType="category">
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="originalText" attributeType="String" defaultValueString=""/>
+        <attribute name="originalTextContext" optional="YES" attributeType="String"/>
+        <attribute name="originalTextLang" optional="YES" attributeType="String"/>
+        <attribute name="translatedText" optional="YES" attributeType="String"/>
+        <attribute name="translatedTextLang" optional="YES" attributeType="String"/>
+    </entity>
     <entity name="CDEntityWithDateMetadata" representedClassName="CDEntityWithDateMetadata" isAbstract="YES" syncable="YES" codeGenerationType="category">
         <attribute name="dateCreated" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="dateModified" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
