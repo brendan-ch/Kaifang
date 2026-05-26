@@ -98,6 +98,11 @@
 			path = "Kaifang-MacUITests";
 			sourceTree = "<group>";
 		};
+		20D03CA72FC630A3001D0D06 /* .github */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = .github;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -153,6 +158,7 @@
 		2056FD852FBBEF2200B4AD3D = {
 			isa = PBXGroup;
 			children = (
+				20D03CA72FC630A3001D0D06 /* .github */,
 				209990E02FC4FB2400C5A4E0 /* KaifangShared */,
 				2056FD902FBBEF2200B4AD3D /* Kaifang */,
 				2056FDAB2FBBEF2400B4AD3D /* KaifangTests */,

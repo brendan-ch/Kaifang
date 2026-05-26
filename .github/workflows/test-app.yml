@@ -1,0 +1,76 @@
+name: App tests
+
+on:
+  pull_request:
+    paths:
+      - 'Kaifang/**'
+      - 'Kaifang-Mac/**'
+      - 'KaifangTests/**'
+      - 'KaifangUITests/**'
+      - 'Kaifang-MacTests/**'
+      - 'Kaifang-MacUITests/**'
+      - 'Kaifang.xcodeproj/**'
+      - 'KaifangShared/**'
+      - '.github/workflows/test-app.yml'
+
+jobs:
+  ios:
+    name: iOS (Kaifang)
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_26.app
+
+      - name: Show toolchain
+        run: xcodebuild -version
+
+      - name: Resolve packages
+        run: xcodebuild -resolvePackageDependencies -project Kaifang.xcodeproj -scheme Kaifang
+
+      - name: Test
+        run: |
+          set -o pipefail
+          xcodebuild test \
+            -project Kaifang.xcodeproj \
+            -scheme Kaifang \
+            -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest' \
+            -enableCodeCoverage YES \
+            -resultBundlePath ios-TestResults.xcresult \
+            | xcbeautify
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ios-TestResults
+          path: ios-TestResults.xcresult
+
+  macos:
+    name: macOS (Kaifang-Mac)
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_26.app
+
+      - name: Resolve packages
+        run: xcodebuild -resolvePackageDependencies -project Kaifang.xcodeproj -scheme Kaifang-Mac
+
+      - name: Test
+        run: |
+          set -o pipefail
+          xcodebuild test \
+            -project Kaifang.xcodeproj \
+            -scheme Kaifang-Mac \
+            -destination 'platform=macOS' \
+            -enableCodeCoverage YES \
+            -resultBundlePath macos-TestResults.xcresult \
+            | xcbeautify
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: macos-TestResults
+          path: macos-TestResults.xcresult
