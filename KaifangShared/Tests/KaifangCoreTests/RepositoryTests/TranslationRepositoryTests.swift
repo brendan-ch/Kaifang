@@ -155,11 +155,10 @@ struct TranslationRepositoryTests {
     @Test("Clearing all translations does not clear other data types")
     func clearAllTranslationsOnlyClearsTranslations() async throws {
         var id: UUID? = nil
-        var article: CDBaseArticle? = nil
         try await container.performBackgroundTask { context in
-            article = CDBaseArticle(context: context)
+            let article = CDBaseArticle(context: context)
             try context.save()
-            id = article?.id
+            id = article.id
         }
         
         try await repository.clear()
@@ -170,6 +169,6 @@ struct TranslationRepositoryTests {
 
         let results = try context.fetch(fetchRequest)
         #expect(results.count == 1)
-        #expect(results[0] == article)
+        #expect(results[0].id == id)
     }
 }
