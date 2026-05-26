@@ -24,6 +24,16 @@ struct TranslationRepositoryTests {
         
     }
     
+    @Test("Translation finding by ID returns translation if found")
+    func translationFindByIdReturnsTranslation() async throws {
+        
+    }
+    
+    @Test("Translation finding by ID returns nil if not found")
+    func translationFindByIdReturnsNil() async throws {
+        
+    }
+    
     @Test("Saving a new translation saves the context")
     func saveTranslationPersistsTranslationInContext() async throws {
         

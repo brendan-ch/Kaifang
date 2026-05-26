@@ -30,7 +30,11 @@ public class TranslationRepository {
         self.container = container
     }
     
-    public func lookup(_ lookup: TranslationLookupArguments) async throws -> String? {
+    public func lookup(_ lookup: TranslationLookupArguments) async throws -> Translation? {
+        return nil
+    }
+    
+    public func find(id: UUID) async throws -> Translation? {
         return nil
     }
     
