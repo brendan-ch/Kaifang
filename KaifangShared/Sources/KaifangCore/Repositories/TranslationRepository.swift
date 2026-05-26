@@ -19,15 +19,16 @@ public class TranslationRepository {
     public func lookup(_ lookup: LookupArguments) async throws -> Translation? {
         let originalText = lookup.originalText
         let originalLangRaw = Self.identifier(for: lookup.originalTextLang)
+        let originalTextContext = lookup.originalTextContext
         let translatedLangRaw = Self.identifier(for: lookup.translatedTextLang)
 
         return try await container.performBackgroundTask { context in
             let request = NSFetchRequest<CDCachedTranslation>(entityName: "CDCachedTranslation")
-            request.predicate = NSPredicate(
-                format: "originalText ==[c] %@ AND originalTextLangRaw == %@ AND translatedTextLangRaw == %@",
-                originalText,
-                originalLangRaw,
-                translatedLangRaw
+            request.predicate = Self.matchingPredicate(
+                originalText: originalText,
+                originalLangRaw: originalLangRaw,
+                originalTextContext: originalTextContext,
+                translatedLangRaw: translatedLangRaw
             )
             request.fetchLimit = 1
             return try context.fetch(request).first.flatMap(Translation.fromCoreData)
@@ -49,13 +50,15 @@ public class TranslationRepository {
             let translatedLangRaw = Self.identifier(for: translation.translatedTextLang)
 
             let dupeRequest = NSFetchRequest<CDCachedTranslation>(entityName: "CDCachedTranslation")
-            dupeRequest.predicate = NSPredicate(
-                format: "originalText ==[c] %@ AND originalTextLangRaw == %@ AND translatedTextLangRaw == %@ AND id != %@",
-                translation.originalText,
-                originalLangRaw,
-                translatedLangRaw,
-                translation.id as CVarArg
-            )
+            dupeRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+                Self.matchingPredicate(
+                    originalText: translation.originalText,
+                    originalLangRaw: originalLangRaw,
+                    originalTextContext: translation.originalTextContext,
+                    translatedLangRaw: translatedLangRaw
+                ),
+                NSPredicate(format: "id != %@", translation.id as CVarArg),
+            ])
             dupeRequest.fetchLimit = 1
             if try context.fetch(dupeRequest).first != nil {
                 throw Error.duplicateOriginalTextAndLang(id: translation.id)
@@ -70,6 +73,7 @@ public class TranslationRepository {
             }
             entity.originalText = translation.originalText
             entity.originalTextLangRaw = originalLangRaw
+            entity.originalTextContext = translation.originalTextContext
             entity.translatedText = translation.translatedText
             entity.translatedTextLangRaw = translatedLangRaw
             
@@ -107,6 +111,24 @@ public class TranslationRepository {
     /// Builds a maximal identifier string, inferring any of the three components if necessary.
     private static func identifier(for language: Locale.Language) -> String {
         language.maximalIdentifier
+    }
+
+    private static func matchingPredicate(
+        originalText: String,
+        originalLangRaw: String,
+        originalTextContext: String?,
+        translatedLangRaw: String
+    ) -> NSPredicate {
+        let contextPredicate = originalTextContext.map {
+            NSPredicate(format: "originalTextContext ==[c] %@", $0)
+        } ?? NSPredicate(format: "originalTextContext == nil")
+
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [
+            NSPredicate(format: "originalText ==[c] %@", originalText),
+            NSPredicate(format: "originalTextLangRaw == %@", originalLangRaw),
+            NSPredicate(format: "translatedTextLangRaw == %@", translatedLangRaw),
+            contextPredicate,
+        ])
     }
 
     private static func fetchEntity(id: UUID, in context: NSManagedObjectContext) throws -> CDCachedTranslation? {

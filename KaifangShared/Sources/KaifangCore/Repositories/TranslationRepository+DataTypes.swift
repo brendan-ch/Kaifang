@@ -12,6 +12,7 @@ public extension TranslationRepository {
         let id: UUID
         let originalText: String
         let originalTextLang: Locale.Language
+        let originalTextContext: String?
         let translatedText: String
         let translatedTextLang: Locale.Language
         
@@ -22,12 +23,14 @@ public extension TranslationRepository {
                 id: id,
                 originalText: originalText,
                 originalTextLang: originalTextLang,
+                originalTextContext: originalTextContext,
                 translatedText: translatedText,
                 translatedTextLang: translatedTextLang
             )
         }
         
         static func fromCoreData(_ entity: CDCachedTranslation) throws -> Self {
+            let originalTextContext = entity.originalTextContext
             guard let id = entity.id,
                   let originalText = entity.originalText,
                   let originalLangRaw = entity.originalTextLangRaw,
@@ -39,6 +42,7 @@ public extension TranslationRepository {
                 id: id,
                 originalText: originalText,
                 originalTextLang: Locale.Language(identifier: originalLangRaw),
+                originalTextContext: originalTextContext,
                 translatedText: translatedText,
                 translatedTextLang: Locale.Language(identifier: translatedLangRaw)
             )
@@ -50,6 +54,7 @@ public extension TranslationRepository {
     struct LookupArguments: Equatable, Sendable {
         let originalText: String
         let originalTextLang: Locale.Language
+        let originalTextContext: String?
         let translatedTextLang: Locale.Language
     }
     

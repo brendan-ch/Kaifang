@@ -26,6 +26,7 @@ struct TranslationRepositoryTests {
         .init(
             originalText: "Hello",
             originalTextLang: .init(identifier: "en-Latn-US"),
+            originalTextContext: nil,
             translatedTextLang: .init(identifier: "zh-Hans-CN")
         )
     }
@@ -35,6 +36,7 @@ struct TranslationRepositoryTests {
             id: id,
             originalText: originalText,
             originalTextLang: .init(identifier: "en-Latn-US"),
+            originalTextContext: nil,
             translatedText: "你好",
             translatedTextLang: .init(identifier: "zh-Hans-CN")
         )
@@ -68,6 +70,7 @@ struct TranslationRepositoryTests {
         let lookupArguments = TranslationRepository.LookupArguments(
             originalText: "Hello",
             originalTextLang: .init(identifier: "en-US"),
+            originalTextContext: nil,
             translatedTextLang: .init(identifier: "zh-Hans-CN"),
         )
         
@@ -83,7 +86,9 @@ struct TranslationRepositoryTests {
         let lookupArguments = TranslationRepository.LookupArguments(
             originalText: "Hello",
             originalTextLang: .init(identifier: "en-Latn-US"),
-            translatedTextLang: .init(identifier: "zh-CN"),  // should be "zh-Hans-CN"
+            originalTextContext: nil,
+            translatedTextLang: .init(identifier: "zh-CN"),
+            // should be "zh-Hans-CN"
         )
 
         let translation = try await repository.lookup(lookupArguments)
@@ -98,6 +103,7 @@ struct TranslationRepositoryTests {
         let lookupArguments = TranslationRepository.LookupArguments(
             originalText: "hELlo",
             originalTextLang: .init(identifier: "en-Latn-US"),
+            originalTextContext: nil,
             translatedTextLang: .init(identifier: "zh-Hans-CN")
         )
         
@@ -126,6 +132,7 @@ struct TranslationRepositoryTests {
             id: UUID(),
             originalText: "Hello",
             originalTextLang: .init(identifier: "en-US"),
+            originalTextContext: nil,
             translatedText: "你好",
             translatedTextLang: .init(identifier: "zh-Hans-CN")
         )
@@ -140,6 +147,7 @@ struct TranslationRepositoryTests {
             id: UUID(),
             originalText: "Hello",
             originalTextLang: .init(identifier: "en-Latn-US"),
+            originalTextContext: nil,
             translatedText: "你好",
             translatedTextLang: .init(identifier: "zh-TW")
         )
