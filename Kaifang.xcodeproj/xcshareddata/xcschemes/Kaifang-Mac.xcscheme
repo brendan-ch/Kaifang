@@ -15,9 +15,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "2056FD8D2FBBEF2200B4AD3D"
-               BuildableName = "Kaifang.app"
-               BlueprintName = "Kaifang"
+               BlueprintIdentifier = "209990B22FC4FABF00C5A4E0"
+               BuildableName = "Kaifang-Mac.app"
+               BlueprintName = "Kaifang-Mac"
                ReferencedContainer = "container:Kaifang.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -30,7 +30,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:TestPlans/Kaifang.xctestplan"
+            reference = "container:TestPlans/Kaifang-Mac.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>
@@ -40,9 +40,9 @@
             parallelizable = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "2056FDA72FBBEF2400B4AD3D"
-               BuildableName = "KaifangTests.xctest"
-               BlueprintName = "KaifangTests"
+               BlueprintIdentifier = "209990C42FC4FAC200C5A4E0"
+               BuildableName = "Kaifang-MacTests.xctest"
+               BlueprintName = "Kaifang-MacTests"
                ReferencedContainer = "container:Kaifang.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -51,9 +51,9 @@
             parallelizable = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "2056FDB12FBBEF2400B4AD3D"
-               BuildableName = "KaifangUITests.xctest"
-               BlueprintName = "KaifangUITests"
+               BlueprintIdentifier = "209990CE2FC4FAC200C5A4E0"
+               BuildableName = "Kaifang-MacUITests.xctest"
+               BlueprintName = "Kaifang-MacUITests"
                ReferencedContainer = "container:Kaifang.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -74,9 +74,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "2056FD8D2FBBEF2200B4AD3D"
-            BuildableName = "Kaifang.app"
-            BlueprintName = "Kaifang"
+            BlueprintIdentifier = "209990B22FC4FABF00C5A4E0"
+            BuildableName = "Kaifang-Mac.app"
+            BlueprintName = "Kaifang-Mac"
             ReferencedContainer = "container:Kaifang.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -91,9 +91,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "2056FD8D2FBBEF2200B4AD3D"
-            BuildableName = "Kaifang.app"
-            BlueprintName = "Kaifang"
+            BlueprintIdentifier = "209990B22FC4FABF00C5A4E0"
+            BuildableName = "Kaifang-Mac.app"
+            BlueprintName = "Kaifang-Mac"
             ReferencedContainer = "container:Kaifang.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

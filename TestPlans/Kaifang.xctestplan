@@ -1,0 +1,52 @@
+{
+  "configurations" : [
+    {
+      "id" : "1ECE13F8-E0F4-4BA0-9FDD-A26BB3F59968",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "performanceAntipatternCheckerEnabled" : true,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:Kaifang.xcodeproj",
+      "identifier" : "2056FD8D2FBBEF2200B4AD3D",
+      "name" : "Kaifang"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:Kaifang.xcodeproj",
+        "identifier" : "2056FDA72FBBEF2400B4AD3D",
+        "name" : "KaifangTests"
+      }
+    },
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:Kaifang.xcodeproj",
+        "identifier" : "2056FDB12FBBEF2400B4AD3D",
+        "name" : "KaifangUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:KaifangShared",
+        "identifier" : "KaifangPresentationTests",
+        "name" : "KaifangPresentationTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:KaifangShared",
+        "identifier" : "KaifangCoreTests",
+        "name" : "KaifangCoreTests"
+      }
+    }
+  ],
+  "version" : 1
+}
