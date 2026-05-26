@@ -52,8 +52,6 @@
 		209990C52FC4FAC200C5A4E0 /* Kaifang-MacTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Kaifang-MacTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		209990CF2FC4FAC200C5A4E0 /* Kaifang-MacUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Kaifang-MacUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		209990E02FC4FB2400C5A4E0 /* KaifangShared */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = KaifangShared; sourceTree = "<group>"; };
-		20D03CD42FC63432001D0D06 /* KaifangPresentation.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = KaifangPresentation.xctestplan; sourceTree = "<group>"; };
-		20D03CD52FC6344C001D0D06 /* KaifangCore.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = file; path = KaifangCore.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -160,8 +158,6 @@
 		2056FD852FBBEF2200B4AD3D = {
 			isa = PBXGroup;
 			children = (
-				20D03CD52FC6344C001D0D06 /* KaifangCore.xctestplan */,
-				20D03CD42FC63432001D0D06 /* KaifangPresentation.xctestplan */,
 				20D03CA72FC630A3001D0D06 /* .github */,
 				209990E02FC4FB2400C5A4E0 /* KaifangShared */,
 				2056FD902FBBEF2200B4AD3D /* Kaifang */,
