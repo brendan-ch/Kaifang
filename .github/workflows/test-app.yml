@@ -35,7 +35,7 @@ jobs:
           xcodebuild test \
             -project Kaifang.xcodeproj \
             -scheme Kaifang \
-            -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest' \
+            -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=latest' \
             -enableCodeCoverage YES \
             -resultBundlePath ios-TestResults.xcresult \
             | xcbeautify
