@@ -30,14 +30,14 @@ public class TranslationRepository {
                 translatedLangRaw
             )
             request.fetchLimit = 1
-            return try context.fetch(request).first.flatMap(Self.toDomain)
+            return try context.fetch(request).first.flatMap(Translation.fromCoreData)
         }
     }
 
     public func find(id: UUID) async throws -> Translation? {
         try await container.performBackgroundTask { context in
             guard let entity = try Self.fetchEntity(id: id, in: context) else { return nil }
-            return try Self.toDomain(entity)
+            return try Translation.fromCoreData(entity)
         }
     }
 
@@ -73,7 +73,7 @@ public class TranslationRepository {
             entity.translatedText = translation.translatedText
             entity.translatedTextLangRaw = translatedLangRaw
             
-            updatedDomainTranslation = try Self.toDomain(entity)
+            updatedDomainTranslation = try Translation.fromCoreData(entity)
             try context.save()
         }
         
@@ -114,22 +114,5 @@ public class TranslationRepository {
         request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
         request.fetchLimit = 1
         return try context.fetch(request).first
-    }
-
-    private static func toDomain(_ entity: CDCachedTranslation) throws -> Translation {
-        guard let id = entity.id,
-              let originalText = entity.originalText,
-              let originalLangRaw = entity.originalTextLangRaw,
-              let translatedText = entity.translatedText,
-              let translatedLangRaw = entity.translatedTextLangRaw else {
-            throw Error.failedConversionToDomainModel
-        }
-        return Translation(
-            id: id,
-            originalText: originalText,
-            originalTextLang: Locale.Language(identifier: originalLangRaw),
-            translatedText: translatedText,
-            translatedTextLang: Locale.Language(identifier: translatedLangRaw)
-        )
     }
 }
