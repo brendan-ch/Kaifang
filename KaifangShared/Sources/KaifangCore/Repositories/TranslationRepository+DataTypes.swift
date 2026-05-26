@@ -26,6 +26,24 @@ public extension TranslationRepository {
                 translatedTextLang: translatedTextLang
             )
         }
+        
+        static func fromCoreData(_ entity: CDCachedTranslation) throws -> Self {
+            guard let id = entity.id,
+                  let originalText = entity.originalText,
+                  let originalLangRaw = entity.originalTextLangRaw,
+                  let translatedText = entity.translatedText,
+                  let translatedLangRaw = entity.translatedTextLangRaw else {
+                throw Error.failedConversionToDomainModel
+            }
+            return Translation(
+                id: id,
+                originalText: originalText,
+                originalTextLang: Locale.Language(identifier: originalLangRaw),
+                translatedText: translatedText,
+                translatedTextLang: Locale.Language(identifier: translatedLangRaw)
+            )
+
+        }
     }
     
     /// Arguments for looking up a translation without an ID.
