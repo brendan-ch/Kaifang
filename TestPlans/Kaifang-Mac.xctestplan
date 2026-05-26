@@ -26,7 +26,6 @@
       }
     },
     {
-      "parallelizable" : true,
       "target" : {
         "containerPath" : "container:Kaifang.xcodeproj",
         "identifier" : "209990CE2FC4FAC200C5A4E0",
