@@ -25,18 +25,18 @@ struct TranslationRepositoryTests {
     private func getSampleLookupArguments() -> TranslationRepository.LookupArguments {
         .init(
             originalText: "Hello",
-            originalTextLang: .init(identifier: "en-US"),
-            translatedTextLang: .init(identifier: "zh-CN")
+            originalTextLang: .init(identifier: "en-Latn-US"),
+            translatedTextLang: .init(identifier: "zh-Hans-CN")
         )
     }
     
-    private func getSampleTranslation() -> TranslationRepository.Translation {
+    private func getSampleTranslation(id: UUID = UUID(), originalText: String = "Hello") -> TranslationRepository.Translation {
         .init(
-            id: UUID(),
-            originalText: "Hello",
-            originalTextLang: .init(identifier: "en-US"),
+            id: id,
+            originalText: originalText,
+            originalTextLang: .init(identifier: "en-Latn-US"),
             translatedText: "你好",
-            translatedTextLang: .init(identifier: "zh-CN")
+            translatedTextLang: .init(identifier: "zh-Hans-CN")
         )
     }
 
@@ -44,7 +44,7 @@ struct TranslationRepositoryTests {
     @Test("Translation save and lookup returns the relevant translation if it exists")
     func translationSaveAndLookupGetsCorrectTranslation() async throws {
         let testTranslation = getSampleTranslation()
-        try await repository.save(testTranslation)
+        _ = try await repository.save(testTranslation)
         
         let lookupArguments = getSampleLookupArguments()
         let retrievedTranslation = try await repository.lookup(lookupArguments)
@@ -60,15 +60,45 @@ struct TranslationRepositoryTests {
         #expect(retrievedTranslation == nil)
     }
     
+    @Test("Translation lookup without full original language code automatically infers the language")
+    func translationLookupWithoutFullOriginalLanguageCodeInfers() async throws {
+        let testTranslation = getSampleTranslation()
+        _ = try await repository.save(testTranslation)
+        
+        let lookupArguments = TranslationRepository.LookupArguments(
+            originalText: "Hello",
+            originalTextLang: .init(identifier: "en-US"),
+            translatedTextLang: .init(identifier: "zh-Hans-CN"),
+        )
+        
+        let translation = try await repository.lookup(lookupArguments)
+        #expect(translation?.originalTextLang == .init(identifier: "en-Latn-US"))
+    }
+    
+    @Test("Translation lookup without full translated language code automatically infers the language")
+    func translationLookupWithoutFullTranslatedLanguageCodeInfers() async throws {
+        let testTranslation = getSampleTranslation()
+        _ = try await repository.save(testTranslation)
+        
+        let lookupArguments = TranslationRepository.LookupArguments(
+            originalText: "Hello",
+            originalTextLang: .init(identifier: "en-Latn-US"),
+            translatedTextLang: .init(identifier: "zh-CN"),  // should be "zh-Hans-CN"
+        )
+
+        let translation = try await repository.lookup(lookupArguments)
+        #expect(translation?.translatedTextLang == .init(identifier: "zh-Hans-CN"))
+    }
+    
     @Test("Translation saving and lookup by original text is case-insensitive")
     func translationSaveAndLookupIsCaseInsensitive() async throws {
         let testTranslation = getSampleTranslation()
-        try await repository.save(testTranslation)
+        _ = try await repository.save(testTranslation)
 
         let lookupArguments = TranslationRepository.LookupArguments(
             originalText: "hELlo",
-            originalTextLang: .init(identifier: "en-US"),
-            translatedTextLang: .init(identifier: "zh-CN")
+            originalTextLang: .init(identifier: "en-Latn-US"),
+            translatedTextLang: .init(identifier: "zh-Hans-CN")
         )
         
         let retrievedTranslation = try await repository.lookup(lookupArguments)
@@ -78,7 +108,7 @@ struct TranslationRepositoryTests {
     @Test("Translation saving and finding by ID returns translation if found")
     func translationSaveAndFindByIdReturnsTranslation() async throws {
         let testTranslation = getSampleTranslation()
-        try await repository.save(testTranslation)
+        _ = try await repository.save(testTranslation)
         
         let retrievedTranslation = try await repository.find(id: testTranslation.id)
         #expect(retrievedTranslation == testTranslation)
@@ -90,13 +120,40 @@ struct TranslationRepositoryTests {
         #expect(retrievedTranslation == nil)
     }
     
+    @Test("Saving a translation without full original language code automatically infers it")
+    func saveTranslationWithoutFullOriginalLanguageCodeThrowsError() async throws {
+        let testTranslation = TranslationRepository.Translation(
+            id: UUID(),
+            originalText: "Hello",
+            originalTextLang: .init(identifier: "en-US"),
+            translatedText: "你好",
+            translatedTextLang: .init(identifier: "zh-Hans-CN")
+        )
+        
+        let updatedTranslation = try await repository.save(testTranslation)
+        #expect(updatedTranslation.originalTextLang == .init(identifier: "en-Latn-US"))
+    }
+    
+    @Test("Saving a translation without full translated language code automatically infers it")
+    func saveTranslationWithoutFullTranslatedLanguageCodeThrowsError() async throws {
+        let testTranslation = TranslationRepository.Translation(
+            id: UUID(),
+            originalText: "Hello",
+            originalTextLang: .init(identifier: "en-Latn-US"),
+            translatedText: "你好",
+            translatedTextLang: .init(identifier: "zh-TW")
+        )
+        
+        let updatedTranslation = try await repository.save(testTranslation)
+        #expect(updatedTranslation.translatedTextLang == .init(identifier: "zh-Hant-TW"))
+    }
+    
     @Test("Saving a translation with an existing ID updates the translation")
     func saveTranslationWithSameIdUpdatesTranslation() async throws {
-        let testTranslation = getSampleTranslation()
-        try await repository.save(testTranslation)
+        let testTranslation = try await repository.save(getSampleTranslation())
         
-        var updatedTranslation = testTranslation.withUpdatedTranslation("Updated translation")
-        try await repository.save(updatedTranslation)
+        let updatedTranslation = testTranslation.withUpdatedTranslation("Updated translation")
+        _ = try await repository.save(updatedTranslation)
         
         let retrievedTranslation = try await repository.find(id: testTranslation.id)
         #expect(retrievedTranslation == updatedTranslation)
@@ -107,18 +164,17 @@ struct TranslationRepositoryTests {
         let testTranslation = getSampleTranslation()
         let secondTestTranslation = getSampleTranslation()
         
-        try await repository.save(testTranslation)
+        _ = try await repository.save(testTranslation)
         
         await #expect(throws: TranslationRepository.Error.duplicateOriginalTextAndLang(id: secondTestTranslation.id)) {
             try await repository.save(secondTestTranslation)
         }
-
     }
     
     @Test("Deleting a translation via ID removes it from the context immediately")
     func deleteTranslationDeletesFromContext() async throws {
         let testTranslation = getSampleTranslation()
-        try await repository.save(testTranslation)
+        _ = try await repository.save(testTranslation)
         
         try await repository.delete(id: testTranslation.id)
         
@@ -138,9 +194,9 @@ struct TranslationRepositoryTests {
     func clearAllTranslationsClearsStoredTranslationsFromContext() async throws {
         var ids: [UUID] = []
         
-        for _ in 0..<3 {
-            let testTranslation = getSampleTranslation()
-            try await repository.save(testTranslation)
+        for i in 0..<3 {
+            let testTranslation = getSampleTranslation(originalText: "Hello \(i)")
+            _ = try await repository.save(testTranslation)
             ids.append(testTranslation.id)
         }
         

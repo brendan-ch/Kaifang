@@ -8,7 +8,7 @@
 import Foundation
 
 public extension TranslationRepository {
-    struct Translation: Equatable {
+    struct Translation: Equatable, Sendable {
         let id: UUID
         let originalText: String
         let originalTextLang: Locale.Language
@@ -29,7 +29,7 @@ public extension TranslationRepository {
     }
     
     /// Arguments for looking up a translation without an ID.
-    struct LookupArguments {
+    struct LookupArguments: Equatable, Sendable {
         let originalText: String
         let originalTextLang: Locale.Language
         let translatedTextLang: Locale.Language
@@ -38,6 +38,7 @@ public extension TranslationRepository {
     enum Error: LocalizedError, Equatable {
         case notFound(id: UUID)
         case duplicateOriginalTextAndLang(id: UUID)
+        case failedConversionToDomainModel
         
         public var errorDescription: String? {
             switch self {
@@ -45,6 +46,8 @@ public extension TranslationRepository {
                 "We couldn't find the translation (ID: \(id))."
             case .duplicateOriginalTextAndLang(let id):
                 "A translation already exists for this text and language combination (ID: \(id))."
+            case .failedConversionToDomainModel:
+                "Unable to convert a Core Data entity to a domain model."
             }
         }
     }
