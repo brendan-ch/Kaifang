@@ -1,5 +1,5 @@
 //
-//  CDEntityWithDateMetadataTests.swift
+//  CDEntityWithIDAndDateMetadataTests.swift
 //  KaifangShared
 //
 //  Created by Brendan Chen on 2026.05.25.
@@ -9,8 +9,8 @@ import Foundation
 import Testing
 @testable import KaifangCore
 
-struct CDEntityWithDateMetadataTests {
-    @Test("Subclass of CDEntityWithDateMetadata is populated with date metadata when created")
+struct CDEntityWithIDAndDateMetadataTests {
+    @Test("Subclass of CDEntityWithIDAndDateMetadata is populated with date metadata when created")
     func subclassHasDateMetadataCorrectlySet() async throws {
         let context = PersistenceController.getTestingContext()
 
@@ -21,7 +21,7 @@ struct CDEntityWithDateMetadataTests {
         #expect(article.dateModified!.isCloseToNow())
     }
     
-    @Test("Subclass of CDEntityWithDateMetadata has updated metadata when saved")
+    @Test("Subclass of CDEntityWithIDAndDateMetadata has updated metadata when saved")
     func subclassHasDateMetadataUpdatedWhenSaved() async throws {
         let context = PersistenceController.getTestingContext()
         
@@ -38,7 +38,7 @@ struct CDEntityWithDateMetadataTests {
         #expect(afterSave != staleDate)
     }
     
-    @Test("Subclass of CDEntityWithDateMetadata does not update date metadata if not a stale date")
+    @Test("Subclass of CDEntityWithIDAndDateMetadata does not update date metadata if not a stale date")
     func subclassDoesNotUpdateDateMetadataIfNotStale() async throws {
         let context = PersistenceController.getTestingContext()
         

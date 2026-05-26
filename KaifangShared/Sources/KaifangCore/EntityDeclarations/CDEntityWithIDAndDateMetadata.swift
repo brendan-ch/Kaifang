@@ -7,8 +7,8 @@
 
 import CoreData
 
-@objc(CDEntityWithDateMetadata)
-public class CDEntityWithDateMetadata: NSManagedObject {
+@objc(CDEntityWithIDAndDateMetadata)
+public class CDEntityWithIDAndDateMetadata: CDEntityWithID {
     public override func awakeFromInsert() {
         super.awakeFromInsert()
         self.dateCreated = Date()

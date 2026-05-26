@@ -8,5 +8,6 @@
 import CoreData
 
 @objc(CDCachedTranslation)
-public class CDCachedTranslation: CDEntityWithDateMetadata {
+public class CDCachedTranslation: CDEntityWithIDAndDateMetadata {
+    
 }

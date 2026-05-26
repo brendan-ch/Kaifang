@@ -1,0 +1,51 @@
+//
+//  TranslationRepository+DataTypes.swift
+//  KaifangShared
+//
+//  Created by Brendan Chen on 2026.05.26.
+//
+
+import Foundation
+
+public extension TranslationRepository {
+    struct Translation: Equatable {
+        let id: UUID
+        let originalText: String
+        let originalTextLang: Locale.Language
+        let translatedText: String
+        let translatedTextLang: Locale.Language
+        
+        func withUpdatedTranslation(
+            _ translatedText: String,
+        ) -> Self {
+            .init(
+                id: id,
+                originalText: originalText,
+                originalTextLang: originalTextLang,
+                translatedText: translatedText,
+                translatedTextLang: translatedTextLang
+            )
+        }
+    }
+    
+    /// Arguments for looking up a translation without an ID.
+    struct LookupArguments {
+        let originalText: String
+        let originalTextLang: Locale.Language
+        let translatedTextLang: Locale.Language
+    }
+    
+    enum Error: LocalizedError, Equatable {
+        case notFound(id: UUID)
+        case duplicateOriginalTextAndLang(id: UUID)
+        
+        public var errorDescription: String? {
+            switch self {
+            case .notFound(let id):
+                "We couldn't find the translation (ID: \(id))."
+            case .duplicateOriginalTextAndLang(let id):
+                "A translation already exists for this text and language combination (ID: \(id))."
+            }
+        }
+    }
+}

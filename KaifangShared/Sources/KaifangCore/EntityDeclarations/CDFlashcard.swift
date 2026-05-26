@@ -8,10 +8,9 @@
 import CoreData
 
 @objc(CDFlashcard)
-public class CDFlashcard: CDEntityWithDateMetadata {
+public class CDFlashcard: CDEntityWithIDAndDateMetadata {
     public override func awakeFromInsert() {
         super.awakeFromInsert()
-        self.id = UUID()
         self.dueDate = Date()
     }
 }

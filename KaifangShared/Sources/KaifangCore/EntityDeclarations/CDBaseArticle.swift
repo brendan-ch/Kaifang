@@ -8,5 +8,5 @@
 import CoreData
 
 @objc(CDBaseArticle)
-public class CDBaseArticle: CDEntityWithDateMetadata {
+public class CDBaseArticle: CDEntityWithIDAndDateMetadata {
 }
