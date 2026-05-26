@@ -17,6 +17,14 @@ public class CDEntityWithDateMetadata: NSManagedObject {
     
     public override func willSave() {
         super.willSave()
-        self.dateModified = Date()
+        guard self.hasChanges else { return }
+        guard let dateModified = self.dateModified else {
+            self.dateCreated = Date()
+            return
+        }
+        
+        if !dateModified.isCloseToNow() {
+            self.dateModified = Date()
+        }
     }
 }
