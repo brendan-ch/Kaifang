@@ -29,8 +29,13 @@ struct TranslationRepositoryTests {
         
     }
     
-    @Test("Saving a translation with the same original text + language overwrites the old translation")
-    func saveExistingTranslationWithOriginalTextOverwritesOld() async throws {
+    @Test("Saving a translation with an existing ID updates the translation")
+    func saveTranslationWithSameIdUpdatesTranslation() async throws {
+        
+    }
+    
+    @Test("Saving a translation with the same original text + language throws an error")
+    func saveTranslationWithExistingOriginalTextAndLangThrowsError() async throws {
         
     }
     
@@ -41,6 +46,11 @@ struct TranslationRepositoryTests {
     
     @Test("Clearing all translations clears the stored translations")
     func clearAllTranslationsClearsStoredTranslationsFromContext() async throws {
+        
+    }
+    
+    @Test("Clearing all translations does not clear other data types")
+    func clearAllTranslationsOnlyClearsTranslations() async throws {
         
     }
 }
