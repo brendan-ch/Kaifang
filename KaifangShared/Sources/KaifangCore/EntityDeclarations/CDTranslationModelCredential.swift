@@ -7,6 +7,6 @@
 
 import CoreData
 
-@objc(CDTranslationModel)
-public class CDTranslationModel: CDEntityWithIDAndDateMetadata {
+@objc(CDTranslationModelCredential)
+public class CDTranslationModelCredential: CDEntityWithIDAndDateMetadata {
 }

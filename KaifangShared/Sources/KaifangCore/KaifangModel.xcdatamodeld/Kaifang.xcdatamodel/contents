@@ -53,7 +53,7 @@
         <attribute name="name" optional="YES" attributeType="String" allowsCloudEncryption="YES"/>
         <relationship name="articles" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CDBaseArticle" inverseName="tags" inverseEntity="CDBaseArticle"/>
     </entity>
-    <entity name="CDTranslationModel" representedClassName="CDTranslationModel" parentEntity="CDEntityWithIDAndDateMetadata" syncable="YES" codeGenerationType="category">
+    <entity name="CDTranslationModelCredential" representedClassName="CDTranslationModelCredential" parentEntity="CDEntityWithIDAndDateMetadata" syncable="YES" codeGenerationType="category">
         <attribute name="metadataJson" optional="YES" attributeType="Binary"/>
         <attribute name="typeRaw" optional="YES" attributeType="String"/>
     </entity>
@@ -68,7 +68,7 @@
         <memberEntity name="CDTag"/>
     </configuration>
     <configuration name="Local">
-        <memberEntity name="CDTranslationModel"/>
+        <memberEntity name="CDTranslationModelCredential"/>
         <memberEntity name="CDEntityWithID"/>
         <memberEntity name="CDEntityWithIDAndDateMetadata"/>
     </configuration>
