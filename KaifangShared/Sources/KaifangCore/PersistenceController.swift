@@ -14,31 +14,50 @@ public final class PersistenceController {
         let modelURL = Bundle.module.url(forResource: "KaifangModel", withExtension: "momd")!
         let model = NSManagedObjectModel(contentsOf: modelURL)!
         container = NSPersistentCloudKitContainer(name: "KaifangModel", managedObjectModel: model)
-        
-        guard let description = container.persistentStoreDescriptions.first else {
-            fatalError("No persistent store description")
-        }
-        description.setOption(true as NSNumber, forKey: NSPersistentHistoryTokenKey)
-        description.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
-        
-        // note: relaunch needed if this setting is changed
+
+        let storeDirectory = NSPersistentContainer.defaultDirectoryURL()
+
+        // Cloud-synced store: holds everything assigned to the "Cloud" configuration.
+        // note: relaunch needed if containerIdentifier is changed
         // also need a separate path to delete iCloud data if toggled off
-        if let containerIdentifier = containerIdentifier {
-            description.cloudKitContainerOptions = NSPersistentCloudKitContainerOptions(
+        let cloudDescription: NSPersistentStoreDescription
+        if inMemory {
+            cloudDescription = NSPersistentStoreDescription(url: URL(fileURLWithPath: "/dev/null/Cloud"))
+            cloudDescription.type = NSInMemoryStoreType
+        } else {
+            cloudDescription = NSPersistentStoreDescription(
+                url: storeDirectory.appendingPathComponent("KaifangModel.sqlite")
+            )
+        }
+        
+        cloudDescription.configuration = "Cloud"
+        cloudDescription.setOption(true as NSNumber, forKey: NSPersistentHistoryTokenKey)
+        cloudDescription.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
+        if let containerIdentifier {
+            cloudDescription.cloudKitContainerOptions = NSPersistentCloudKitContainerOptions(
                 containerIdentifier: containerIdentifier
             )
-        } else {
-            description.cloudKitContainerOptions = nil
         }
-        
+
+        // Local-only store: holds device-specific data (e.g. translation model providers)
+        // that should never sync via CloudKit.
+        let localDescription: NSPersistentStoreDescription
         if inMemory {
-            description.url = URL(fileURLWithPath: "/dev/null")
+            localDescription = NSPersistentStoreDescription(
+                url: URL(fileURLWithPath: "/dev/null/Local")
+            )
+            localDescription.type = NSInMemoryStoreType
+        } else {
+            localDescription = NSPersistentStoreDescription(url: storeDirectory.appendingPathComponent("KaifangModel-Local.sqlite"))
         }
-        
+        localDescription.configuration = "Local"
+
+        container.persistentStoreDescriptions = [cloudDescription, localDescription]
+
         container.loadPersistentStores { _, error in
             if let error { fatalError("Core Data failed: \(error)") }
         }
-        
+
         container.viewContext.automaticallyMergesChangesFromParent = true
     }
 }
