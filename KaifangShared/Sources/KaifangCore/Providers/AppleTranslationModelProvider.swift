@@ -55,7 +55,7 @@ public final class AppleTranslationModelProvider: TranslationModel.Provider {
             switch self {
             case .translationUnavailable:
                 "Translation is currently unavailable. Please try again later or use a different provider."
-            case .notImplemented(let string):
+            case .notImplemented(_):
                 "A method was not implemented."
             }
         }
