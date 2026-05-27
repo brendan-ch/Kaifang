@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24901" systemVersion="25D2128" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24901" systemVersion="25F71" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="CDArticleSentenceToken" representedClassName="CDArticleSentenceToken" parentEntity="CDEntityWithIDAndDateMetadata" syncable="YES" codeGenerationType="category">
         <attribute name="sentenceIndex" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="tokenText" optional="YES" attributeType="String"/>
@@ -53,4 +53,23 @@
         <attribute name="name" optional="YES" attributeType="String" allowsCloudEncryption="YES"/>
         <relationship name="articles" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CDBaseArticle" inverseName="tags" inverseEntity="CDBaseArticle"/>
     </entity>
+    <entity name="CDTranslationModel" representedClassName="CDTranslationModel" parentEntity="CDEntityWithIDAndDateMetadata" syncable="YES" codeGenerationType="category">
+        <attribute name="metadataJson" optional="YES" attributeType="Binary"/>
+        <attribute name="typeRaw" optional="YES" attributeType="String"/>
+    </entity>
+    <configuration name="Cloud" usedWithCloudKit="YES">
+        <memberEntity name="CDArticleSentenceToken"/>
+        <memberEntity name="CDArticleWordToken"/>
+        <memberEntity name="CDBaseArticle"/>
+        <memberEntity name="CDCachedTranslation"/>
+        <memberEntity name="CDEntityWithID"/>
+        <memberEntity name="CDEntityWithIDAndDateMetadata"/>
+        <memberEntity name="CDFlashcard"/>
+        <memberEntity name="CDTag"/>
+    </configuration>
+    <configuration name="Local">
+        <memberEntity name="CDTranslationModel"/>
+        <memberEntity name="CDEntityWithID"/>
+        <memberEntity name="CDEntityWithIDAndDateMetadata"/>
+    </configuration>
 </model>
