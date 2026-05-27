@@ -47,9 +47,18 @@ public final class AppleTranslationModelProvider: TranslationModel.Provider {
         ) async throws -> String
     }
 
-    public enum Error: Swift.Error {
+    public enum Error: LocalizedError {
         case notImplemented(String)
         case translationUnavailable
+        
+        var localizedDescription: String {
+            switch self {
+            case .translationUnavailable:
+                "Translation is currently unavailable. Please try again later or use a different provider."
+            case .notImplemented(let string):
+                "A method was not implemented."
+            }
+        }
     }
 
     // MARK: State
@@ -149,7 +158,7 @@ public final class AppleTranslationModelProvider: TranslationModel.Provider {
             targetLang: Locale.Language
         ) async throws -> String {
             let instructions = """
-            You extract the translation of a specific word or phrase from a \
+            You extract the translation of a specific phrase from a \
             translated passage. You will be given the original word, the original \
             context where it appears, and the translated context. Identify the \
             translation of the original word as it appears in the translated \
