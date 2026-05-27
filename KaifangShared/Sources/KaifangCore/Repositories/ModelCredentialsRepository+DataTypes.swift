@@ -22,13 +22,6 @@ public extension ModelCredentialsRepository {
         public let secureData: (any ModelSecureData)?
         
         /// Save the credential to both Core Data and Keychain.
-        public func save(context: NSManagedObjectContext, keychainProvider: KeychainProvider) throws {
-        }
-        
-        static public func find(_ id: UUID, context: NSManagedObjectContext, keychainProvider: KeychainProvider) throws -> Self? {
-            return nil
-        }
-        
         public func toCoreData(context: NSManagedObjectContext) throws -> CDTranslationModelCredential {
             let credential = CDTranslationModelCredential(context: context)
             
@@ -39,41 +32,72 @@ public extension ModelCredentialsRepository {
             return credential
         }
         
-        public func fromCoreData(_ coreData: CDTranslationModelCredential) throws -> Self {
-            guard let id = coreData.id else {
+        public func encodeSecureMetadata() throws -> Data? {
+            guard let secureData = secureData else { return nil }
+            return try JSONEncoder().encode(secureData)
+        }
+
+        public static func fromCoreDataAndSecureData(
+            _ entity: CDTranslationModelCredential,
+            secureData: Data?
+        ) throws -> ModelCredentials {
+            guard let id = entity.id else {
                 throw Error.failedConversionToDomainModel
             }
-            
+            guard let typeRaw = entity.typeRaw else {
+                throw Error.failedConversionToDomainModel
+            }
+
+            let decodedMetadata = try decodeInternalMetadata(entity, typeRaw: typeRaw)
+            let decodedSecureData = try decodeSecureMetadata(from: secureData, typeRaw: typeRaw)
+
+            return ModelCredentials(
+                id: id,
+                internalMetadata: decodedMetadata,
+                secureData: decodedSecureData
+            )
+        }
+
+        private static func decodeInternalMetadata(
+            _ entity: CDTranslationModelCredential,
+            typeRaw: String
+        ) throws -> any ModelInternalMetadata {
             let decoder = JSONDecoder()
-            let decodedMetadata: any ModelInternalMetadata
-            
-            if let metadataJson = coreData.metadataJson {
-                switch coreData.typeRaw {
+
+            if let metadataJson = entity.metadataJson {
+                switch typeRaw {
                 case AppleInternalMetadata.coreDataRawType:
-                    decodedMetadata = try decoder.decode(AppleInternalMetadata.self, from: metadataJson)
+                    return try decoder.decode(AppleInternalMetadata.self, from: metadataJson)
                 case AnthropicInternalMetadata.coreDataRawType:
-                    decodedMetadata = try decoder.decode(AnthropicInternalMetadata.self, from: metadataJson)
+                    return try decoder.decode(AnthropicInternalMetadata.self, from: metadataJson)
                 default:
                     throw Error.failedConversionToDomainModel
                 }
             } else {
-                switch coreData.typeRaw {
+                switch typeRaw {
                 case AppleInternalMetadata.coreDataRawType:
-                    decodedMetadata = AppleInternalMetadata()
+                    return AppleInternalMetadata()
                 case AnthropicInternalMetadata.coreDataRawType:
-                    decodedMetadata = AnthropicInternalMetadata()
+                    return AnthropicInternalMetadata()
                 default:
                     throw Error.failedConversionToDomainModel
                 }
             }
+        }
+        
+        private static func decodeSecureMetadata(from data: Data?, typeRaw: String) throws -> (any ModelSecureData)? {
+            guard let data = data else { return nil }
             
-            // TODO: return secure data
-            
-            return ModelCredentials(
-                id: id,
-                internalMetadata: decodedMetadata,
-                secureData: nil
-            )
+            let decoder = JSONDecoder()
+            switch typeRaw {
+                case AppleInternalMetadata.coreDataRawType:
+                // not required for the Apple translation provider
+                return nil
+            case AnthropicInternalMetadata.coreDataRawType:
+                return try decoder.decode(AnthropicSecureData.self, from: data)
+            default:
+                throw Error.failedConversionToDomainModel
+            }
         }
     }
     
