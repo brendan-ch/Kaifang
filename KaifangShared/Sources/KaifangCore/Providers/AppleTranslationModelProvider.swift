@@ -82,7 +82,7 @@ public final class AppleTranslationModelProvider: TranslationModel.Provider {
 
     // MARK: Translate
 
-    public func translate(_ query: TranslationModel.Query) async throws -> TranslationModel.Result {
+    public func translate(_ query: TranslationProvider.LookupArguments) async throws -> TranslationProvider.Translation {
         let finalText: String
 
         if let refiner, refiner.isAvailable,
@@ -90,14 +90,14 @@ public final class AppleTranslationModelProvider: TranslationModel.Provider {
             let translatedContext = try await translator.translate(
                 context,
                 from: query.originalTextLang,
-                to: query.translatedLang
+                to: query.translatedTextLang
             )
             do {
                 finalText = try await refiner.extractTranslation(
                     of: query.originalText,
                     translatedContext: translatedContext,
                     originalContext: context,
-                    targetLang: query.translatedLang
+                    targetLang: query.translatedTextLang
                 )
             } catch {
                 // Extraction is best-effort — fall back to translating the
@@ -105,21 +105,24 @@ public final class AppleTranslationModelProvider: TranslationModel.Provider {
                 finalText = try await translator.translate(
                     query.originalText,
                     from: query.originalTextLang,
-                    to: query.translatedLang
+                    to: query.translatedTextLang
                 )
             }
         } else {
             finalText = try await translator.translate(
                 query.originalText,
                 from: query.originalTextLang,
-                to: query.translatedLang
+                to: query.translatedTextLang
             )
         }
 
-        return TranslationModel.Result(
-            translatedTextLang: query.translatedLang,
+        return TranslationProvider.Translation(
+            id: UUID(),
+            originalText: query.originalText,
+            originalTextLang: query.originalTextLang,
+            originalTextContext: query.originalTextContext,
             translatedText: finalText,
-            originalQuery: query
+            translatedTextLang: query.translatedTextLang
         )
     }
 

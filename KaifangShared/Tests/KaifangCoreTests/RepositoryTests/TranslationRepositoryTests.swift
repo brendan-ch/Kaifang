@@ -22,7 +22,7 @@ struct TranslationRepositoryTests {
     }
     
     // MARK: Data helpers
-    private func getSampleLookupArguments() -> TranslationRepository.LookupArguments {
+    private func getSampleLookupArguments() -> TranslationProvider.LookupArguments {
         .init(
             originalText: "Hello",
             originalTextLang: .init(identifier: "en-Latn-US"),
@@ -31,7 +31,7 @@ struct TranslationRepositoryTests {
         )
     }
     
-    private func getSampleTranslation(id: UUID = UUID(), originalText: String = "Hello") -> TranslationRepository.Translation {
+    private func getSampleTranslation(id: UUID = UUID(), originalText: String = "Hello") -> TranslationProvider.Translation {
         .init(
             id: id,
             originalText: originalText,
@@ -67,7 +67,7 @@ struct TranslationRepositoryTests {
         let testTranslation = getSampleTranslation()
         _ = try await repository.save(testTranslation)
         
-        let lookupArguments = TranslationRepository.LookupArguments(
+        let lookupArguments = TranslationProvider.LookupArguments(
             originalText: "Hello",
             originalTextLang: .init(identifier: "en-US"),
             originalTextContext: nil,
@@ -83,7 +83,7 @@ struct TranslationRepositoryTests {
         let testTranslation = getSampleTranslation()
         _ = try await repository.save(testTranslation)
         
-        let lookupArguments = TranslationRepository.LookupArguments(
+        let lookupArguments = TranslationProvider.LookupArguments(
             originalText: "Hello",
             originalTextLang: .init(identifier: "en-Latn-US"),
             originalTextContext: nil,
@@ -100,7 +100,7 @@ struct TranslationRepositoryTests {
         let testTranslation = getSampleTranslation()
         _ = try await repository.save(testTranslation)
 
-        let lookupArguments = TranslationRepository.LookupArguments(
+        let lookupArguments = TranslationProvider.LookupArguments(
             originalText: "hELlo",
             originalTextLang: .init(identifier: "en-Latn-US"),
             originalTextContext: nil,
@@ -128,7 +128,7 @@ struct TranslationRepositoryTests {
     
     @Test("Saving a translation without full original language code automatically infers it")
     func saveTranslationWithoutFullOriginalLanguageCodeThrowsError() async throws {
-        let testTranslation = TranslationRepository.Translation(
+        let testTranslation = TranslationProvider.Translation(
             id: UUID(),
             originalText: "Hello",
             originalTextLang: .init(identifier: "en-US"),
@@ -143,7 +143,7 @@ struct TranslationRepositoryTests {
     
     @Test("Saving a translation without full translated language code automatically infers it")
     func saveTranslationWithoutFullTranslatedLanguageCodeThrowsError() async throws {
-        let testTranslation = TranslationRepository.Translation(
+        let testTranslation = TranslationProvider.Translation(
             id: UUID(),
             originalText: "Hello",
             originalTextLang: .init(identifier: "en-Latn-US"),

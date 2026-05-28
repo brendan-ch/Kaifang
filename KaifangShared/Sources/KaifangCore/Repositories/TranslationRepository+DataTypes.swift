@@ -8,61 +8,11 @@
 import Foundation
 
 public extension TranslationRepository {
-    struct Translation: Equatable, Sendable {
-        let id: UUID
-        let originalText: String
-        let originalTextLang: Locale.Language
-        let originalTextContext: String?
-        let translatedText: String
-        let translatedTextLang: Locale.Language
-        
-        func withUpdatedTranslation(
-            _ translatedText: String,
-        ) -> Self {
-            .init(
-                id: id,
-                originalText: originalText,
-                originalTextLang: originalTextLang,
-                originalTextContext: originalTextContext,
-                translatedText: translatedText,
-                translatedTextLang: translatedTextLang
-            )
-        }
-        
-        static func fromCoreData(_ entity: CDCachedTranslation) throws -> Self {
-            let originalTextContext = entity.originalTextContext
-            guard let id = entity.id,
-                  let originalText = entity.originalText,
-                  let originalLangRaw = entity.originalTextLangRaw,
-                  let translatedText = entity.translatedText,
-                  let translatedLangRaw = entity.translatedTextLangRaw else {
-                throw Error.failedConversionToDomainModel
-            }
-            return Translation(
-                id: id,
-                originalText: originalText,
-                originalTextLang: Locale.Language(identifier: originalLangRaw),
-                originalTextContext: originalTextContext,
-                translatedText: translatedText,
-                translatedTextLang: Locale.Language(identifier: translatedLangRaw)
-            )
-
-        }
-    }
-    
-    /// Arguments for looking up a translation without an ID.
-    struct LookupArguments: Equatable, Sendable {
-        let originalText: String
-        let originalTextLang: Locale.Language
-        let originalTextContext: String?
-        let translatedTextLang: Locale.Language
-    }
-    
     enum Error: LocalizedError, Equatable {
         case notFound(id: UUID)
         case duplicateOriginalTextAndLang(id: UUID)
         case failedConversionToDomainModel
-        
+
         public var errorDescription: String? {
             switch self {
             case .notFound(let id):

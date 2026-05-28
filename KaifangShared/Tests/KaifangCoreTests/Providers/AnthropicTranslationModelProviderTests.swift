@@ -187,12 +187,12 @@ private func makeProvider<S: Stub>(
     )
 }
 
-private func makeQuery(context: String? = nil) -> TranslationModel.Query {
-    TranslationModel.Query(
+private func makeQuery(context: String? = nil) -> TranslationProvider.LookupArguments {
+    TranslationProvider.LookupArguments(
         originalText: "hello",
         originalTextLang: Locale.Language(identifier: "en"),
         originalTextContext: context,
-        translatedLang: Locale.Language(identifier: "es")
+        translatedTextLang: Locale.Language(identifier: "es")
     )
 }
 

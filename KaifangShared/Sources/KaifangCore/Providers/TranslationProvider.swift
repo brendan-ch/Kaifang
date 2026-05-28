@@ -54,6 +54,14 @@ public final class TranslationProvider {
             )
         }
     }
+    
+    // MARK: Translation
+    
+//    public func translate() async throws -> TranslationProvider.Translation {
+//        
+//    }
+    
+    // MARK: Types
 
     public enum BuildError: Swift.Error, LocalizedError {
         case appleTranslationUnavailable

@@ -16,7 +16,7 @@ public class TranslationRepository {
         self.container = container
     }
 
-    public func lookup(_ lookup: LookupArguments) async throws -> Translation? {
+    public func lookup(_ lookup: TranslationProvider.LookupArguments) async throws -> TranslationProvider.Translation? {
         let originalText = lookup.originalText
         let originalLangRaw = Self.identifier(for: lookup.originalTextLang)
         let originalTextContext = lookup.originalTextContext
@@ -31,19 +31,19 @@ public class TranslationRepository {
                 translatedLangRaw: translatedLangRaw
             )
             request.fetchLimit = 1
-            return try context.fetch(request).first.flatMap(Translation.fromCoreData)
+            return try context.fetch(request).first.flatMap(TranslationProvider.Translation.fromCoreData)
         }
     }
 
-    public func find(id: UUID) async throws -> Translation? {
+    public func find(id: UUID) async throws -> TranslationProvider.Translation? {
         try await container.performBackgroundTask { context in
             guard let entity = try Self.fetchEntity(id: id, in: context) else { return nil }
-            return try Translation.fromCoreData(entity)
+            return try TranslationProvider.Translation.fromCoreData(entity)
         }
     }
 
-    public func save(_ translation: Translation) async throws -> Translation {
-        var updatedDomainTranslation: Translation? = nil
+    public func save(_ translation: TranslationProvider.Translation) async throws -> TranslationProvider.Translation {
+        var updatedDomainTranslation: TranslationProvider.Translation? = nil
         
         try await container.performBackgroundTask { context in
             let originalLangRaw = Self.identifier(for: translation.originalTextLang)
@@ -77,7 +77,7 @@ public class TranslationRepository {
             entity.translatedText = translation.translatedText
             entity.translatedTextLangRaw = translatedLangRaw
             
-            updatedDomainTranslation = try Translation.fromCoreData(entity)
+            updatedDomainTranslation = try TranslationProvider.Translation.fromCoreData(entity)
             try context.save()
         }
         

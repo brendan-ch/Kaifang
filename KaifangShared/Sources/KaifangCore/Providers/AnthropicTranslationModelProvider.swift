@@ -110,7 +110,7 @@ public final class AnthropicTranslationModelProvider: TranslationModel.Provider 
 
     // MARK: Translate
 
-    public func translate(_ query: TranslationModel.Query) async throws -> TranslationModel.Result {
+    public func translate(_ query: TranslationProvider.LookupArguments) async throws -> TranslationProvider.Translation {
         let request = try makeRequest(for: query)
         let (data, response) = try await session.data(for: request)
 
@@ -121,10 +121,13 @@ public final class AnthropicTranslationModelProvider: TranslationModel.Provider 
         switch http.statusCode {
         case 200..<300:
             let translated = try decodeSuccess(data)
-            return TranslationModel.Result(
-                translatedTextLang: query.translatedLang,
+            return TranslationProvider.Translation(
+                id: UUID(),
+                originalText: query.originalText,
+                originalTextLang: query.originalTextLang,
+                originalTextContext: query.originalTextContext,
                 translatedText: translated,
-                originalQuery: query
+                translatedTextLang: query.translatedTextLang
             )
         case 401:
             throw Error.invalidAPIKey
@@ -141,7 +144,7 @@ public final class AnthropicTranslationModelProvider: TranslationModel.Provider 
 
     // MARK: Request construction
 
-    private func makeRequest(for query: TranslationModel.Query) throws -> URLRequest {
+    private func makeRequest(for query: TranslationProvider.LookupArguments) throws -> URLRequest {
         var request = URLRequest(url: endpoint)
         request.httpMethod = "POST"
         request.setValue(apiKey, forHTTPHeaderField: "x-api-key")
@@ -158,9 +161,9 @@ public final class AnthropicTranslationModelProvider: TranslationModel.Provider 
         return request
     }
 
-    private func systemPrompt(for query: TranslationModel.Query) -> String {
+    private func systemPrompt(for query: TranslationProvider.LookupArguments) -> String {
         let source = languageLabel(query.originalTextLang, fallback: "the source language")
-        let target = languageLabel(query.translatedLang, fallback: "the target language")
+        let target = languageLabel(query.translatedTextLang, fallback: "the target language")
 
         if let context = query.originalTextContext, !context.isEmpty {
             return """
@@ -178,7 +181,7 @@ public final class AnthropicTranslationModelProvider: TranslationModel.Provider 
         }
     }
 
-    private func userMessage(for query: TranslationModel.Query) -> String {
+    private func userMessage(for query: TranslationProvider.LookupArguments) -> String {
         if let context = query.originalTextContext, !context.isEmpty {
             return """
             Text:

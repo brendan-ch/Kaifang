@@ -21,11 +21,11 @@ struct AppleTranslationModelProviderTests {
 
         let provider = AppleTranslationModelProvider(translator: translator, refiner: refiner)
 
-        let query = TranslationModel.Query(
+        let query = TranslationProvider.LookupArguments(
             originalText: "hello",
             originalTextLang: Locale.Language(identifier: "en"),
             originalTextContext: "Say hello to the world",
-            translatedLang: Locale.Language(identifier: "es")
+            translatedTextLang: Locale.Language(identifier: "es")
         )
 
         let result = try await provider.translate(query)
@@ -47,11 +47,11 @@ struct AppleTranslationModelProviderTests {
 
         let provider = AppleTranslationModelProvider(translator: translator, refiner: refiner)
 
-        let query = TranslationModel.Query(
+        let query = TranslationProvider.LookupArguments(
             originalText: "hello",
             originalTextLang: Locale.Language(identifier: "en"),
             originalTextContext: "Say hello to the world",
-            translatedLang: Locale.Language(identifier: "es")
+            translatedTextLang: Locale.Language(identifier: "es")
         )
 
         let result = try await provider.translate(query)
