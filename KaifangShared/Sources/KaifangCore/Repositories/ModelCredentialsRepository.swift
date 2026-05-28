@@ -9,6 +9,17 @@ import CoreData
 import Foundation
 
 public final class ModelCredentialsRepository {
+    private let container: NSPersistentContainer
+    private let keychainProvider: KeychainProvider
+    
+    public init(
+        container: NSPersistentContainer,
+        keychainProvider: KeychainProvider
+    ) {
+        self.container = container
+        self.keychainProvider = keychainProvider
+    }
+
     // MARK: Repository methods
 
     /// Get the model credentials selected by the user, or nil if no credentials are set.

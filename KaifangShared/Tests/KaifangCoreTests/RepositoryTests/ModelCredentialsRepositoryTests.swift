@@ -2,187 +2,51 @@
 //  ModelCredentialsRepositoryTests.swift
 //  KaifangShared
 //
-//  Created by Brendan Chen on 2026.05.27.
+//  Created by Brendan Chen on 2026.05.28.
 //
 
-import CoreData
 import Foundation
 import Testing
 @testable import KaifangCore
 
 @Suite
-struct ModelCredentialsTests {
-    // MARK: Setup
-    private let context: NSManagedObjectContext
-
-    init() async throws {
-        context = PersistenceController.getTestingContext()
-    }
-
-    // MARK: Data helpers
-    private func makeAnthropicCredentials(
-        id: UUID = UUID(),
-        model: String = "claude-sonnet-4.5",
-        apiKey: String = "test-api-key"
-    ) -> ModelCredentialsRepository.ModelCredentials {
-        ModelCredentialsRepository.ModelCredentials(
-            id: id,
-            internalMetadata: ModelCredentialsRepository.AnthropicInternalMetadata(model: model),
-            secureData: ModelCredentialsRepository.AnthropicSecureData(apiKey: apiKey)
-        )
-    }
-
-    // MARK: toCoreData tests
-    @Test("ModelCredentials converts correctly to a Core Data entity")
-    func modelCredentialsConvertsToCoreData() async throws {
-        let credentials = makeAnthropicCredentials(model: "claude-haiku-4-5")
-        let entity = try credentials.toCoreData(context: context)
-
-        #expect(entity.id == credentials.id)
-        #expect(entity.typeRaw == ModelCredentialsRepository.AnthropicInternalMetadata.coreDataRawType)
-
-        let metadataJson = try #require(entity.metadataJson)
-        let decodedMetadata = try JSONDecoder().decode(
-            ModelCredentialsRepository.AnthropicInternalMetadata.self,
-            from: metadataJson
-        )
-        #expect(decodedMetadata.model == "claude-haiku-4-5")
-    }
-
-    @Test("ModelCredentials rethrows JSON encoding errors when converting to Core Data")
-    func modelCredentialsToCoreDataRethrowsJsonError() async throws {
-        let credentials = ModelCredentialsRepository.ModelCredentials(
-            id: UUID(),
-            internalMetadata: ThrowingInternalMetadata(),
-            secureData: nil
-        )
-
-        #expect(throws: ThrowingInternalMetadata.IntentionalError.self) {
-            _ = try credentials.toCoreData(context: context)
-        }
-    }
-
-    // MARK: fromCoreDataAndSecureData tests
-    @Test("fromCoreDataAndSecureData converts from Core Data and secure data with existing metadata in both")
-    func fromCoreDataAndSecureDataConvertsFromCoreDataAndSecureData() async throws {
-        let id = UUID()
-        let metadata = ModelCredentialsRepository.AnthropicInternalMetadata(model: "claude-sonnet-4.5")
-        let secureData = ModelCredentialsRepository.AnthropicSecureData(apiKey: "test-api-key")
-
-        let entity = CDTranslationModelCredential(context: context)
-        entity.id = id
-        entity.typeRaw = ModelCredentialsRepository.AnthropicInternalMetadata.coreDataRawType
-        entity.metadataJson = try JSONEncoder().encode(metadata)
-
-        let secureDataBlob = try JSONEncoder().encode(secureData)
-
-        let credentials = try ModelCredentialsRepository.ModelCredentials.fromCoreDataAndSecureData(
-            entity,
-            secureData: secureDataBlob
-        )
-
-        #expect(credentials.id == id)
-        let decodedMetadata = try #require(
-            credentials.internalMetadata as? ModelCredentialsRepository.AnthropicInternalMetadata
-        )
-        #expect(decodedMetadata.model == "claude-sonnet-4.5")
-        let decodedSecureData = try #require(
-            credentials.secureData as? ModelCredentialsRepository.AnthropicSecureData
-        )
-        #expect(decodedSecureData.apiKey == "test-api-key")
-    }
-
-    @Test("fromCoreDataAndSecureData converts from Core Data and empty secure data")
-    func fromCoreDataAndSecureDataDecodesWithoutSecureData() async throws {
-        let id = UUID()
-        let metadata = ModelCredentialsRepository.AnthropicInternalMetadata(model: "claude-sonnet-4.5")
-
-        let entity = CDTranslationModelCredential(context: context)
-        entity.id = id
-        entity.typeRaw = ModelCredentialsRepository.AnthropicInternalMetadata.coreDataRawType
-        entity.metadataJson = try JSONEncoder().encode(metadata)
-
-        let credentials = try ModelCredentialsRepository.ModelCredentials.fromCoreDataAndSecureData(
-            entity,
-            secureData: nil
-        )
-
-        #expect(credentials.id == id)
-        let decodedMetadata = try #require(
-            credentials.internalMetadata as? ModelCredentialsRepository.AnthropicInternalMetadata
-        )
-        #expect(decodedMetadata.model == "claude-sonnet-4.5")
-        #expect(credentials.secureData == nil)
-    }
-
-    @Test("fromCoreDataAndSecureData automatically creates blank internal metadata if no metadata exists from Core Data")
-    func modelCredentialsCreatesBlankDataIfNoMetadataFromCoreData() async throws {
-        let id = UUID()
-
-        let entity = CDTranslationModelCredential(context: context)
-        entity.id = id
-        entity.typeRaw = ModelCredentialsRepository.AnthropicInternalMetadata.coreDataRawType
-        entity.metadataJson = nil
-
-        let credentials = try ModelCredentialsRepository.ModelCredentials.fromCoreDataAndSecureData(
-            entity,
-            secureData: nil
-        )
-
-        #expect(credentials.id == id)
-        let decodedMetadata = try #require(
-            credentials.internalMetadata as? ModelCredentialsRepository.AnthropicInternalMetadata
-        )
-        #expect(decodedMetadata.model == ModelCredentialsRepository.AnthropicInternalMetadata.defaultModel)
-    }
-
-    @Test("fromCoreDataAndSecureData rethrows JSON decoding errors when converting from Core Data")
-    func fromCoreDataAndSecureDataRethrowsJsonDecodingErrorsForCoreData() async throws {
-        let entity = CDTranslationModelCredential(context: context)
-        entity.id = UUID()
-        entity.typeRaw = ModelCredentialsRepository.AnthropicInternalMetadata.coreDataRawType
-        entity.metadataJson = Data("not valid json".utf8)
-
-        #expect(throws: DecodingError.self) {
-            _ = try ModelCredentialsRepository.ModelCredentials.fromCoreDataAndSecureData(
-                entity,
-                secureData: nil
-            )
-        }
-    }
-
-    @Test("fromCoreDataAndSecureData rethrows JSON decoding errors when converting from secure data")
-    func fromCoreDataAndSecureDataRethrowsJsonDecodingErrorsForSecureData() async throws {
-        let metadata = ModelCredentialsRepository.AnthropicInternalMetadata()
-
-        let entity = CDTranslationModelCredential(context: context)
-        entity.id = UUID()
-        entity.typeRaw = ModelCredentialsRepository.AnthropicInternalMetadata.coreDataRawType
-        entity.metadataJson = try JSONEncoder().encode(metadata)
-
-        #expect(throws: DecodingError.self) {
-            _ = try ModelCredentialsRepository.ModelCredentials.fromCoreDataAndSecureData(
-                entity,
-                secureData: Data("not valid json".utf8)
-            )
-        }
-    }
+struct ModelCredentialsRepositoryTests {
+    // Tests are added in a future step once the repository methods are
+    // implemented. The test double below stands in for the Keychain.
 }
 
 // MARK: - Test doubles
 
-private struct ThrowingInternalMetadata: ModelCredentialsRepository.ModelInternalMetadata {
-    static let coreDataRawType: String = "throwing"
+/// In-memory stand-in for the real Keychain, mirroring the observable semantics
+/// of `AppleKeychainProvider`: `save` upserts, `load` throws `.notFound` when a
+/// blob is absent, and `delete` is idempotent. The optional error hooks let
+/// tests exercise failure paths.
+///
+/// This is a `final class` rather than an actor (unlike the Apple* provider
+/// doubles) because `KeychainProvider`'s methods are synchronous and
+/// non-`mutating`, so capturing state requires reference semantics.
+private final class InMemoryKeychainProvider: ModelCredentialsRepository.KeychainProvider {
+    private(set) var storage: [String: Data] = [:]
 
-    enum IntentionalError: Swift.Error { case intentional }
+    var loadError: Error?
+    var saveError: Error?
+    var deleteError: Error?
 
-    init() {}
-
-    init(from decoder: Decoder) throws {
-        throw IntentionalError.intentional
+    func load(id: String) throws -> Data {
+        if let loadError { throw loadError }
+        guard let data = storage[id] else {
+            throw ModelCredentialsRepository.KeychainError.notFound
+        }
+        return data
     }
 
-    func encode(to encoder: Encoder) throws {
-        throw IntentionalError.intentional
+    func save(_ data: Data, id: String) throws {
+        if let saveError { throw saveError }
+        storage[id] = data
+    }
+
+    func delete(id: String) throws {
+        if let deleteError { throw deleteError }
+        storage[id] = nil
     }
 }

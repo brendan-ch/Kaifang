@@ -9,6 +9,20 @@ import CoreData
 import Foundation
 
 public extension ModelCredentialsRepository {
+    // MARK: Protocols
+    
+    /// A model's metadata that is coded to/decoded from JSON in Core Data.
+    protocol ModelInternalMetadata: Sendable, Codable {
+        /// The corresponding type property used to mark the Core Data entity.
+        static var coreDataRawType: String { get }
+    }
+    
+    
+    /// Model credential data stored as a blob in Keychain.
+    protocol ModelSecureData: Codable, Sendable {
+    }
+    
+    // MARK: Data types
     enum Error: LocalizedError, Equatable {
         case coreDataNotFound
         case keychainNotFound
@@ -101,21 +115,6 @@ public extension ModelCredentialsRepository {
         }
     }
     
-    protocol KeychainProvider {
-        // TODO: keychain-related methods
-    }
-    
-    /// A model's metadata that is coded to/decoded from JSON in Core Data.
-    protocol ModelInternalMetadata: Sendable, Codable {
-        /// The corresponding type property used to mark the Core Data entity.
-        static var coreDataRawType: String { get }
-    }
-    
-    
-    /// Model credential data stored as a blob in Keychain.
-    protocol ModelSecureData: Codable, Sendable {
-    }
-    
     struct AppleInternalMetadata: ModelInternalMetadata {
         public static let coreDataRawType: String = "apple"
     }
@@ -134,4 +133,6 @@ public extension ModelCredentialsRepository {
     struct AnthropicSecureData: ModelSecureData {
         public let apiKey: String
     }
+    
+    
 }
