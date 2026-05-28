@@ -34,18 +34,7 @@ public extension ModelCredentialsRepository {
         public let id: UUID
         public let internalMetadata: any ModelInternalMetadata
         public let secureData: (any ModelSecureData)?
-        
-        /// Save the credential to both Core Data and Keychain.
-        public func toCoreData(context: NSManagedObjectContext) throws -> CDTranslationModelCredential {
-            let credential = CDTranslationModelCredential(context: context)
-            
-            credential.typeRaw = type(of: internalMetadata).coreDataRawType
-            credential.id = id
-            credential.metadataJson = try JSONEncoder().encode(internalMetadata)
-            
-            return credential
-        }
-        
+
         public func encodeSecureMetadata() throws -> Data? {
             guard let secureData = secureData else { return nil }
             return try JSONEncoder().encode(secureData)

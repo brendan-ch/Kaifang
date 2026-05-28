@@ -9,7 +9,7 @@ import Foundation
 import Security
 
 public extension ModelCredentialsRepository {
-    enum KeychainError: LocalizedError {
+    enum KeychainError: LocalizedError, Equatable {
         case notFound
         case unexpectedData
         case unexpectedStatus(OSStatus)

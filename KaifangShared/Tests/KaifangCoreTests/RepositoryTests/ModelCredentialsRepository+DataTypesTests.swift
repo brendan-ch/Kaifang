@@ -19,49 +19,6 @@ struct ModelCredentialsTests {
         context = PersistenceController.getTestingContext()
     }
 
-    // MARK: Data helpers
-    private func makeAnthropicCredentials(
-        id: UUID = UUID(),
-        model: String = "claude-sonnet-4.5",
-        apiKey: String = "test-api-key"
-    ) -> ModelCredentialsRepository.ModelCredentials {
-        ModelCredentialsRepository.ModelCredentials(
-            id: id,
-            internalMetadata: ModelCredentialsRepository.AnthropicInternalMetadata(model: model),
-            secureData: ModelCredentialsRepository.AnthropicSecureData(apiKey: apiKey)
-        )
-    }
-
-    // MARK: toCoreData tests
-    @Test("ModelCredentials converts correctly to a Core Data entity")
-    func modelCredentialsConvertsToCoreData() async throws {
-        let credentials = makeAnthropicCredentials(model: "claude-haiku-4-5")
-        let entity = try credentials.toCoreData(context: context)
-
-        #expect(entity.id == credentials.id)
-        #expect(entity.typeRaw == ModelCredentialsRepository.AnthropicInternalMetadata.coreDataRawType)
-
-        let metadataJson = try #require(entity.metadataJson)
-        let decodedMetadata = try JSONDecoder().decode(
-            ModelCredentialsRepository.AnthropicInternalMetadata.self,
-            from: metadataJson
-        )
-        #expect(decodedMetadata.model == "claude-haiku-4-5")
-    }
-
-    @Test("ModelCredentials rethrows JSON encoding errors when converting to Core Data")
-    func modelCredentialsToCoreDataRethrowsJsonError() async throws {
-        let credentials = ModelCredentialsRepository.ModelCredentials(
-            id: UUID(),
-            internalMetadata: ThrowingInternalMetadata(),
-            secureData: nil
-        )
-
-        #expect(throws: ThrowingInternalMetadata.IntentionalError.self) {
-            _ = try credentials.toCoreData(context: context)
-        }
-    }
-
     // MARK: fromCoreDataAndSecureData tests
     @Test("fromCoreDataAndSecureData converts from Core Data and secure data with existing metadata in both")
     func fromCoreDataAndSecureDataConvertsFromCoreDataAndSecureData() async throws {
@@ -166,23 +123,5 @@ struct ModelCredentialsTests {
                 secureData: Data("not valid json".utf8)
             )
         }
-    }
-}
-
-// MARK: - Test doubles
-
-private struct ThrowingInternalMetadata: ModelCredentialsRepository.ModelInternalMetadata {
-    static let coreDataRawType: String = "throwing"
-
-    enum IntentionalError: Swift.Error { case intentional }
-
-    init() {}
-
-    init(from decoder: Decoder) throws {
-        throw IntentionalError.intentional
-    }
-
-    func encode(to encoder: Encoder) throws {
-        throw IntentionalError.intentional
     }
 }
