@@ -19,7 +19,7 @@ final class ModelCredentialsRepositoryTests {
     let suiteName: String
 
     init() async throws {
-        container = PersistenceController.getTestingContainer()
+        container = try PersistenceController.getTestingContainer()
         keychainProvider = InMemoryKeychainProvider()
         let suiteName = "test.\(UUID().uuidString)"
         defaults = UserDefaults(suiteName: suiteName)!

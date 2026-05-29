@@ -16,7 +16,7 @@ struct ModelCredentialsTests {
     private let context: NSManagedObjectContext
 
     init() async throws {
-        context = PersistenceController.getTestingContext()
+        context = try PersistenceController.getTestingContext()
     }
 
     // MARK: fromCoreDataAndSecureData tests

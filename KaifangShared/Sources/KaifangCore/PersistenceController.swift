@@ -9,11 +9,17 @@ import CoreData
 
 public final class PersistenceController {
     public let container: NSPersistentContainer
-    
-    public init(inMemory: Bool = false, containerIdentifier: String? = nil) {
-        let modelURL = Bundle.module.url(forResource: "KaifangModel", withExtension: "momd")!
-        let model = NSManagedObjectModel(contentsOf: modelURL)!
-        container = NSPersistentCloudKitContainer(name: "KaifangModel", managedObjectModel: model)
+
+    private static let modelName = "KaifangModel"
+
+    public init(inMemory: Bool = false, containerIdentifier: String? = nil) throws(Error) {
+        guard let modelURL = Bundle.module.url(forResource: Self.modelName, withExtension: "momd") else {
+            throw .modelNotFound(name: Self.modelName)
+        }
+        guard let model = NSManagedObjectModel(contentsOf: modelURL) else {
+            throw .modelLoadFailed(url: modelURL)
+        }
+        container = NSPersistentCloudKitContainer(name: Self.modelName, managedObjectModel: model)
 
         let storeDirectory = NSPersistentContainer.defaultDirectoryURL()
 
@@ -29,9 +35,9 @@ public final class PersistenceController {
                 url: storeDirectory.appendingPathComponent("KaifangModel.sqlite")
             )
         }
-        
+
         cloudDescription.configuration = "Cloud"
-        cloudDescription.setOption(true as NSNumber, forKey: NSPersistentHistoryTokenKey)
+        cloudDescription.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
         cloudDescription.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
         if let containerIdentifier {
             cloudDescription.cloudKitContainerOptions = NSPersistentCloudKitContainerOptions(
@@ -54,10 +60,40 @@ public final class PersistenceController {
 
         container.persistentStoreDescriptions = [cloudDescription, localDescription]
 
-        container.loadPersistentStores { _, error in
-            if let error { fatalError("Core Data failed: \(error)") }
+        // `loadPersistentStores` invokes the handler once per store, synchronously
+        // for the store types used here. Capture the first failure and surface it
+        // to the caller instead of crashing — migration mismatches, a corrupt
+        // store, or missing CloudKit entitlements all land here.
+        var storeLoadFailure: (store: String, underlying: Swift.Error)?
+        container.loadPersistentStores { description, error in
+            if let error, storeLoadFailure == nil {
+                let store = description.configuration
+                    ?? description.url?.lastPathComponent
+                    ?? "unknown"
+                storeLoadFailure = (store, error)
+            }
+        }
+        if let storeLoadFailure {
+            throw .storeLoadFailed(store: storeLoadFailure.store, underlying: storeLoadFailure.underlying)
         }
 
         container.viewContext.automaticallyMergesChangesFromParent = true
+    }
+
+    public enum Error: LocalizedError {
+        case modelNotFound(name: String)
+        case modelLoadFailed(url: URL)
+        case storeLoadFailed(store: String, underlying: Swift.Error)
+
+        public var errorDescription: String? {
+            switch self {
+            case .modelNotFound(let name):
+                "Couldn't locate the Core Data model \"\(name)\" in the package bundle."
+            case .modelLoadFailed(let url):
+                "Couldn't load the Core Data model at \(url.path)."
+            case .storeLoadFailed(let store, let underlying):
+                "Couldn't load the \"\(store)\" persistent store: \(underlying.localizedDescription)"
+            }
+        }
     }
 }

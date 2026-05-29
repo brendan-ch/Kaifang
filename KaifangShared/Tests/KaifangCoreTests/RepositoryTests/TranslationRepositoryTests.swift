@@ -17,7 +17,7 @@ struct TranslationRepositoryTests {
     private let repository: TranslationRepository
     
     init() async throws {
-        container = PersistenceController.getTestingContainer()
+        container = try PersistenceController.getTestingContainer()
         repository = TranslationRepository(container: container)
     }
     

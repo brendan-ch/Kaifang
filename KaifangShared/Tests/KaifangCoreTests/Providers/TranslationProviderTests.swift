@@ -19,8 +19,8 @@ struct TranslationProviderTests {
     private let modelProvider: StubModelProvider
     let provider: TranslationProvider
 
-    init() {
-        container = PersistenceController.getTestingContainer()
+    init() throws {
+        container = try PersistenceController.getTestingContainer()
         repository = TranslationRepository(container: container)
         modelProvider = StubModelProvider(response: Self.modelTranslation)
         provider = TranslationProvider(repository: repository, modelProvider: modelProvider)

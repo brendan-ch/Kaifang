@@ -9,12 +9,12 @@ import KaifangCore
 import CoreData
 
 extension PersistenceController {
-    static func getTestingContainer() -> NSPersistentContainer {
-        PersistenceController(inMemory: true).container
+    static func getTestingContainer() throws -> NSPersistentContainer {
+        try PersistenceController(inMemory: true).container
     }
-    
-    static func getTestingContext() -> NSManagedObjectContext {
-        let persistenceController = PersistenceController(inMemory: true)
+
+    static func getTestingContext() throws -> NSManagedObjectContext {
+        let persistenceController = try PersistenceController(inMemory: true)
         let context = persistenceController.container.viewContext
         return context
     }
