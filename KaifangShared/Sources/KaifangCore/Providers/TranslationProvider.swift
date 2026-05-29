@@ -57,9 +57,15 @@ public final class TranslationProvider {
     
     // MARK: Translation
     
-//    public func translate() async throws -> TranslationProvider.Translation {
-//        
-//    }
+    public func translate(_ lookup: LookupArguments) async throws -> TranslationProvider.Translation {
+        if let translation = try await repository.lookup(lookup) {
+            return translation
+        }
+        
+        var translation = try await modelProvider.translate(lookup)
+        translation = try await repository.save(translation)
+        return translation
+    }
     
     // MARK: Types
 
