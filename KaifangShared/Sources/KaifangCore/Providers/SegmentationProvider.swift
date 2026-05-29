@@ -9,5 +9,7 @@ import NaturalLanguage
 
 /// Provide word- and sentence-level segmentations using ``NLTokenizer``.
 public final class SegmentationProvider {
-    
+    public func segment(_ fullText: String) async throws -> [SentenceToken] {
+        return []
+    }
 }

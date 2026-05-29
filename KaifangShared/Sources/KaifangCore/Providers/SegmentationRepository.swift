@@ -6,5 +6,7 @@
 //
 
 public final class SegmentationRepository {
-    
+    public func getSentencesForArticle(article: ArticleProvider.Article) async throws -> [SegmentationProvider.SentenceToken]? {
+        return nil
+    }
 }
