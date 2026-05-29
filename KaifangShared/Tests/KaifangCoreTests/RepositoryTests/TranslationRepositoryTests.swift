@@ -10,7 +10,7 @@ import Foundation
 import Testing
 @testable import KaifangCore
 
-@Suite
+@Suite(.serialized)
 struct TranslationRepositoryTests {
     // MARK: Setup
     private let container: NSPersistentContainer
