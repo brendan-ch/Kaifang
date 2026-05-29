@@ -19,7 +19,10 @@ let package = Package(
     targets: [
         .target(
             name: "KaifangCore",
-            resources: [.process("KaifangModel.xcdatamodeld")]
+            resources: [
+                .process("KaifangModel.xcdatamodeld"),
+                .copy("Resources/cedict_ts.u8"),
+            ]
         ),
         .target(
             name: "KaifangPresentation",
