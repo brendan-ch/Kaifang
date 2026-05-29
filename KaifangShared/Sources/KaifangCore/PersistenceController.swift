@@ -12,13 +12,20 @@ public final class PersistenceController {
 
     private static let modelName = "KaifangModel"
 
-    public init(inMemory: Bool = false, containerIdentifier: String? = nil) throws(Error) {
-        guard let modelURL = Bundle.module.url(forResource: Self.modelName, withExtension: "momd") else {
-            throw .modelNotFound(name: Self.modelName)
+    /// Loaded once per process: duplicate `NSManagedObjectModel` instances make concurrent saves resolve an entity to the wrong model and fail the store's configuration check (Core Data error 134020).
+    private nonisolated(unsafe) static let sharedModel: Result<NSManagedObjectModel, Error> = {
+        guard let modelURL = Bundle.module.url(forResource: modelName, withExtension: "momd") else {
+            return .failure(.modelNotFound(name: modelName))
         }
         guard let model = NSManagedObjectModel(contentsOf: modelURL) else {
-            throw .modelLoadFailed(url: modelURL)
+            return .failure(.modelLoadFailed(url: modelURL))
         }
+        return .success(model)
+    }()
+
+    public init(inMemory: Bool = false, containerIdentifier: String? = nil) throws(Error) {
+        // Share just the *model*, not the in-memory stores, during tests
+        let model = try Self.sharedModel.get()
         container = NSPersistentCloudKitContainer(name: Self.modelName, managedObjectModel: model)
 
         let storeDirectory = NSPersistentContainer.defaultDirectoryURL()

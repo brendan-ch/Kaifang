@@ -10,7 +10,7 @@ import Foundation
 import Testing
 @testable import KaifangCore
 
-@Suite
+@Suite(.serialized)
 struct ModelCredentialsTests {
     // MARK: Setup
     private let context: NSManagedObjectContext
