@@ -10,8 +10,8 @@ import Testing
 
 struct CDFlashcardTests {
     @Test("Newly created flashcard has correct due date")
-    func testDueDateIsCorrectlySet() {
-        let context = PersistenceController.getTestingContext()
+    func testDueDateIsCorrectlySet() throws {
+        let context = try PersistenceController.getTestingContext()
         
         let card = CDFlashcard(context: context)
         #expect(card.dueDate != nil)
