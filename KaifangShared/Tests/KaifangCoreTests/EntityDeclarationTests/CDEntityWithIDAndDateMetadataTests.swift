@@ -12,7 +12,7 @@ import Testing
 struct CDEntityWithIDAndDateMetadataTests {
     @Test("Subclass of CDEntityWithIDAndDateMetadata is populated with date metadata when created")
     func subclassHasDateMetadataCorrectlySet() async throws {
-        let context = PersistenceController.getTestingContext()
+        let context = try PersistenceController.getTestingContext()
 
         let article = CDBaseArticle(context: context)
         #expect(article.dateCreated != nil)
@@ -23,7 +23,7 @@ struct CDEntityWithIDAndDateMetadataTests {
     
     @Test("Subclass of CDEntityWithIDAndDateMetadata has updated metadata when saved")
     func subclassHasDateMetadataUpdatedWhenSaved() async throws {
-        let context = PersistenceController.getTestingContext()
+        let context = try PersistenceController.getTestingContext()
         
         let article = CDBaseArticle(context: context)
         try context.save()
@@ -40,7 +40,7 @@ struct CDEntityWithIDAndDateMetadataTests {
     
     @Test("Subclass of CDEntityWithIDAndDateMetadata does not update date metadata if not a stale date")
     func subclassDoesNotUpdateDateMetadataIfNotStale() async throws {
-        let context = PersistenceController.getTestingContext()
+        let context = try PersistenceController.getTestingContext()
         
         let article = CDBaseArticle(context: context)
         try context.save()

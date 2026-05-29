@@ -17,24 +17,26 @@ struct TranslationRepositoryTests {
     private let repository: TranslationRepository
     
     init() async throws {
-        container = PersistenceController.getTestingContainer()
+        container = try PersistenceController.getTestingContainer()
         repository = TranslationRepository(container: container)
     }
     
     // MARK: Data helpers
-    private func getSampleLookupArguments() -> TranslationRepository.LookupArguments {
+    private func getSampleLookupArguments() -> TranslationProvider.LookupArguments {
         .init(
             originalText: "Hello",
             originalTextLang: .init(identifier: "en-Latn-US"),
+            originalTextContext: nil,
             translatedTextLang: .init(identifier: "zh-Hans-CN")
         )
     }
     
-    private func getSampleTranslation(id: UUID = UUID(), originalText: String = "Hello") -> TranslationRepository.Translation {
+    private func getSampleTranslation(id: UUID = UUID(), originalText: String = "Hello") -> TranslationProvider.Translation {
         .init(
             id: id,
             originalText: originalText,
             originalTextLang: .init(identifier: "en-Latn-US"),
+            originalTextContext: nil,
             translatedText: "你好",
             translatedTextLang: .init(identifier: "zh-Hans-CN")
         )
@@ -65,9 +67,10 @@ struct TranslationRepositoryTests {
         let testTranslation = getSampleTranslation()
         _ = try await repository.save(testTranslation)
         
-        let lookupArguments = TranslationRepository.LookupArguments(
+        let lookupArguments = TranslationProvider.LookupArguments(
             originalText: "Hello",
             originalTextLang: .init(identifier: "en-US"),
+            originalTextContext: nil,
             translatedTextLang: .init(identifier: "zh-Hans-CN"),
         )
         
@@ -80,10 +83,12 @@ struct TranslationRepositoryTests {
         let testTranslation = getSampleTranslation()
         _ = try await repository.save(testTranslation)
         
-        let lookupArguments = TranslationRepository.LookupArguments(
+        let lookupArguments = TranslationProvider.LookupArguments(
             originalText: "Hello",
             originalTextLang: .init(identifier: "en-Latn-US"),
-            translatedTextLang: .init(identifier: "zh-CN"),  // should be "zh-Hans-CN"
+            originalTextContext: nil,
+            translatedTextLang: .init(identifier: "zh-CN"),
+            // should be "zh-Hans-CN"
         )
 
         let translation = try await repository.lookup(lookupArguments)
@@ -95,9 +100,10 @@ struct TranslationRepositoryTests {
         let testTranslation = getSampleTranslation()
         _ = try await repository.save(testTranslation)
 
-        let lookupArguments = TranslationRepository.LookupArguments(
+        let lookupArguments = TranslationProvider.LookupArguments(
             originalText: "hELlo",
             originalTextLang: .init(identifier: "en-Latn-US"),
+            originalTextContext: nil,
             translatedTextLang: .init(identifier: "zh-Hans-CN")
         )
         
@@ -122,10 +128,11 @@ struct TranslationRepositoryTests {
     
     @Test("Saving a translation without full original language code automatically infers it")
     func saveTranslationWithoutFullOriginalLanguageCodeThrowsError() async throws {
-        let testTranslation = TranslationRepository.Translation(
+        let testTranslation = TranslationProvider.Translation(
             id: UUID(),
             originalText: "Hello",
             originalTextLang: .init(identifier: "en-US"),
+            originalTextContext: nil,
             translatedText: "你好",
             translatedTextLang: .init(identifier: "zh-Hans-CN")
         )
@@ -136,10 +143,11 @@ struct TranslationRepositoryTests {
     
     @Test("Saving a translation without full translated language code automatically infers it")
     func saveTranslationWithoutFullTranslatedLanguageCodeThrowsError() async throws {
-        let testTranslation = TranslationRepository.Translation(
+        let testTranslation = TranslationProvider.Translation(
             id: UUID(),
             originalText: "Hello",
             originalTextLang: .init(identifier: "en-Latn-US"),
+            originalTextContext: nil,
             translatedText: "你好",
             translatedTextLang: .init(identifier: "zh-TW")
         )
