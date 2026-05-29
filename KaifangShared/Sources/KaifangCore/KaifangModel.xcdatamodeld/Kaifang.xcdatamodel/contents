@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24901" systemVersion="25F71" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="CDArticleSentenceToken" representedClassName="CDArticleSentenceToken" parentEntity="CDEntityWithIDAndDateMetadata" syncable="YES" codeGenerationType="category">
-        <attribute name="articlePlainTextIndexStart" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="sentenceIndex" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="articleTextPositionStart" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="sentenceIndexInArticle" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="tokenText" optional="YES" attributeType="String"/>
         <relationship name="article" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDBaseArticle" inverseName="sentenceTokens" inverseEntity="CDBaseArticle"/>
         <relationship name="flashcards" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CDFlashcard" inverseName="sentenceToken" inverseEntity="CDFlashcard"/>
         <relationship name="words" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="CDArticleWordToken" inverseName="sentence" inverseEntity="CDArticleWordToken"/>
     </entity>
     <entity name="CDArticleWordToken" representedClassName="CDArticleWordToken" parentEntity="CDEntityWithIDAndDateMetadata" syncable="YES" codeGenerationType="category">
-        <attribute name="sentenceTextIndexStart" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="sentenceTextPositionStart" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="tokenText" optional="YES" attributeType="String"/>
+        <attribute name="wordIndexInSentence" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="sentence" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDArticleSentenceToken" inverseName="words" inverseEntity="CDArticleSentenceToken"/>
     </entity>
     <entity name="CDBaseArticle" representedClassName="CDBaseArticle" parentEntity="CDEntityWithIDAndDateMetadata" syncable="YES" codeGenerationType="category">
