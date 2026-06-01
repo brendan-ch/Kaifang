@@ -12,16 +12,21 @@ public extension ArticleProvider {
     struct Article: Equatable, Sendable {
         let id: UUID
         
-        let author: String
         let plainText: String
         let title: String
         let datePublished: Date?
         let dateRead: Date?
         
         let tags: Set<Tag>
+        let authors: Set<Author>
     }
     
     struct Tag: Equatable, Sendable, Hashable {
+        let id: UUID
+        let name: String
+    }
+    
+    struct Author: Equatable, Sendable, Hashable {
         let id: UUID
         let name: String
     }
@@ -38,8 +43,8 @@ public extension ArticleProvider {
     }
     
     enum SortCriteria: Hashable {
-        case dateModified(latestFirst: Bool)
-        case dateCreated(latestFirst: Bool)
-        case title(aToZ: Bool)
+        case dateModified(SortOrder)
+        case dateCreated(SortOrder)
+        case title(SortOrder)
     }
 }

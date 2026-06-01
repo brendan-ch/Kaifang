@@ -10,7 +10,9 @@ import CoreData
 
 public final class ArticleRepository {
     public typealias Tag = ArticleProvider.Tag
+    public typealias Author = ArticleProvider.Author
     public typealias FilterArguments = ArticleProvider.FilterArguments
+    public typealias SortCriteria = ArticleProvider.SortCriteria
     public typealias Article = ArticleProvider.Article
     public typealias SentenceToken = SegmentationProvider.SentenceToken
     
@@ -20,12 +22,20 @@ public final class ArticleRepository {
         self.container = container
     }
     
-    /// Get all tags in alphabetical order.
-    public func getTags() async throws -> [Tag] {
+    /// Get all the tags.
+    public func getTags() async throws -> Set<Tag> {
         return []
     }
     
-    public func filter(_ arguments: FilterArguments) async throws -> [Article] {
+    /// Get all the authors.
+    public func getAuthors() async throws -> Set<Author> {
+        return []
+    }
+    
+    public func list(
+        filterBy arguments: FilterArguments,
+        sortBy sortArguments: SortCriteria
+    ) async throws -> [Article] {
         return []
     }
     
@@ -45,8 +55,20 @@ public final class ArticleRepository {
         
     }
     
+    public func save(_ articles: [Article]) async throws -> [Article] {
+        return []
+    }
+    
     public func save(_ article: Article) async throws -> Article {
         fatalError("not implemented")
+    }
+    
+    public func saveTags(_ tags: Set<Tag>) async throws -> Set<Tag> {
+        return []
+    }
+    
+    public func saveAuthors(_ author: Set<Author>) async throws -> Set<Author> {
+        return []
     }
     
     public func delete(id: UUID) async throws {
