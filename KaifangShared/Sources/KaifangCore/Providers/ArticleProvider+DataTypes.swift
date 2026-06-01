@@ -12,7 +12,18 @@ public extension ArticleProvider {
     struct Article: Equatable, Sendable {
         let id: UUID
         
-        // stub implementation, add other properties later
+        let author: String
+        let plainText: String
+        let title: String
+        let datePublished: Date?
+        let dateRead: Date?
+        
+        let tags: Set<Tag>
+    }
+    
+    struct Tag: Equatable, Sendable, Hashable {
+        let id: String
+        let name: String
     }
     
     struct FilterArguments {
