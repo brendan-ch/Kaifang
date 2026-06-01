@@ -19,6 +19,31 @@ public extension ArticleProvider {
         
         let tags: Set<Tag>
         let authors: Set<Author>
+        
+        let dateCreated: Date
+        let dateModified: Date
+        
+        init(
+            id: UUID,
+            plainText: String,
+            title: String,
+            datePublished: Date?,
+            dateRead: Date?,
+            tags: Set<Tag>,
+            authors: Set<Author>,
+            dateCreated: Date = Date(),
+            dateModified: Date = Date()
+        ) {
+            self.id = id
+            self.plainText = plainText
+            self.title = title
+            self.datePublished = datePublished
+            self.dateRead = dateRead
+            self.tags = tags
+            self.authors = authors
+            self.dateCreated = dateCreated
+            self.dateModified = dateModified
+        }
     }
     
     struct Tag: Equatable, Sendable, Hashable {
@@ -42,7 +67,7 @@ public extension ArticleProvider {
         let unreadOnly: Bool?
     }
     
-    enum SortCriteria: Hashable {
+    enum SortCriteria: Hashable, Sendable {
         case dateModified(SortOrder)
         case dateCreated(SortOrder)
         case title(SortOrder)
