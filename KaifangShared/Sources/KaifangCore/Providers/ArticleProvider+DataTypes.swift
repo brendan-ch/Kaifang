@@ -36,4 +36,10 @@ public extension ArticleProvider {
         /// Whether to show only unread articles.
         let unreadOnly: Bool?
     }
+    
+    enum SortCriteria: Hashable {
+        case dateModified(latestFirst: Bool)
+        case dateCreated(latestFirst: Bool)
+        case title(aToZ: Bool)
+    }
 }
