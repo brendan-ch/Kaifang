@@ -14,21 +14,25 @@
         <attribute name="wordIndexInSentence" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="sentence" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDArticleSentenceToken" inverseName="words" inverseEntity="CDArticleSentenceToken"/>
     </entity>
+    <entity name="CDAuthor" representedClassName="CDAuthor" syncable="YES" codeGenerationType="class">
+        <attribute name="name" optional="YES" attributeType="String" allowsCloudEncryption="YES"/>
+        <relationship name="articles" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CDBaseArticle" inverseName="authors" inverseEntity="CDBaseArticle"/>
+    </entity>
     <entity name="CDBaseArticle" representedClassName="CDBaseArticle" parentEntity="CDEntityWithIDAndDateMetadata" syncable="YES" codeGenerationType="category">
-        <attribute name="author" optional="YES" attributeType="String" allowsCloudEncryption="YES"/>
         <attribute name="datePublished" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="dateRead" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="plainText" attributeType="String" defaultValueString="" allowsCloudEncryption="YES"/>
         <attribute name="title" attributeType="String" defaultValueString="Untitled" allowsCloudEncryption="YES"/>
+        <relationship name="authors" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CDAuthor" inverseName="articles" inverseEntity="CDAuthor"/>
         <relationship name="sentenceTokens" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="CDArticleSentenceToken" inverseName="article" inverseEntity="CDArticleSentenceToken"/>
         <relationship name="tags" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CDTag" inverseName="articles" inverseEntity="CDTag"/>
     </entity>
     <entity name="CDCachedTranslation" representedClassName="CDCachedTranslation" parentEntity="CDEntityWithIDAndDateMetadata" syncable="YES" codeGenerationType="category">
-        <attribute name="originalText" attributeType="String" defaultValueString=""/>
-        <attribute name="originalTextContext" optional="YES" attributeType="String"/>
-        <attribute name="originalTextLangRaw" optional="YES" attributeType="String"/>
-        <attribute name="translatedText" optional="YES" attributeType="String"/>
-        <attribute name="translatedTextLangRaw" optional="YES" attributeType="String"/>
+        <attribute name="originalText" attributeType="String" defaultValueString="" allowsCloudEncryption="YES"/>
+        <attribute name="originalTextContext" optional="YES" attributeType="String" allowsCloudEncryption="YES"/>
+        <attribute name="originalTextLangRaw" optional="YES" attributeType="String" allowsCloudEncryption="YES"/>
+        <attribute name="translatedText" optional="YES" attributeType="String" allowsCloudEncryption="YES"/>
+        <attribute name="translatedTextLangRaw" optional="YES" attributeType="String" allowsCloudEncryption="YES"/>
     </entity>
     <entity name="CDEntityWithID" representedClassName="CDEntityWithID" isAbstract="YES" syncable="YES" codeGenerationType="category">
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
@@ -64,6 +68,7 @@
         <memberEntity name="CDEntityWithIDAndDateMetadata"/>
         <memberEntity name="CDFlashcard"/>
         <memberEntity name="CDTag"/>
+        <memberEntity name="CDAuthor"/>
     </configuration>
     <configuration name="Local">
         <memberEntity name="CDTranslationModelCredential"/>
