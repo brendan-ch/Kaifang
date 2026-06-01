@@ -28,7 +28,7 @@ public extension ArticleProvider {
     
     struct FilterArguments {
         /// When passed, only the articles with all of the tags here will be displayed.
-        let tags: Set<String>?
+        let tags: Set<Tag>?
         
         /// When passed, filters by the title and contents of the articles.
         let titleAndContents: String?

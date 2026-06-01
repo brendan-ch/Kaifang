@@ -22,9 +22,18 @@ struct ArticleRepositoryTests {
     
     // MARK: Tests
     
+    @Test("Getting all tags gets them by alphabetical order")
+    func getTagsReturnsInAlphabeticalOrder() async throws {
+        
+    }
+    
+    @Test("Getting all tags returns empty array if no tags exist")
+    func getTagsReturnsEmptyArrayIfNonexistent() async throws {
+        
+    }
+    
     @Test("Filtering filters by tags")
     func filterFiltersByTags() async throws {
-        
     }
     
     @Test("Filtering title and contents filters by title")
@@ -127,6 +136,11 @@ struct ArticleRepositoryTests {
         // assume there can be a mix of existing + new tags by ID
     }
     
+    @Test("Saving a new article with tags having conflicting names with existing tags throws")
+    func saveWithTagsHavingConflictingNamesThrows() async throws {
+        
+    }
+    
     @Test("Deleting an article deletes the article")
     func deleteDeletesTheArticle() async throws {
         
@@ -134,6 +148,11 @@ struct ArticleRepositoryTests {
     
     @Test("Deleting an article also deletes its sentence tokens")
     func deleteDeletesSentenceTokens() async throws {
+        
+    }
+    
+    @Test("Deleting an article also deletes associated tags if no more articles point to them")
+    func deleteDeletesAssociatedTagsIfNoArticlesPointToThem() async throws {
         
     }
     

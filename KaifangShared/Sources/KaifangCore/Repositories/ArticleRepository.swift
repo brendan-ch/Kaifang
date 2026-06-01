@@ -9,6 +9,7 @@ import Foundation
 import CoreData
 
 public final class ArticleRepository {
+    public typealias Tag = ArticleProvider.Tag
     public typealias FilterArguments = ArticleProvider.FilterArguments
     public typealias Article = ArticleProvider.Article
     public typealias SentenceToken = SegmentationProvider.SentenceToken
@@ -17,6 +18,11 @@ public final class ArticleRepository {
     
     public init(container: NSPersistentContainer) {
         self.container = container
+    }
+    
+    /// Get all tags in alphabetical order.
+    public func getTags() async throws -> [Tag] {
+        return []
     }
     
     public func filter(_ arguments: FilterArguments) async throws -> [Article] {
