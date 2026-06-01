@@ -77,5 +77,68 @@ struct ArticleRepositoryTests {
         
     }
     
+    @Test("Finding an article by UUID returns the article if found")
+    func findReturnsArticle() async throws {
+        
+    }
     
+    @Test("Finding an article by UUID returns nil if the article is not found")
+    func findReturnsNilIfNotFound() async throws {
+        
+    }
+    
+    @Test("Getting the sentence tokens for an article returns an empty array if they don't exist")
+    func getSentenceTokensReturnsNilIfNonexistent() async throws {
+        
+    }
+    
+    @Test("Getting the sentence tokens for an article returns the sentence tokens ordered by index")
+    func getSentenceTokensReturnsOrderedSentenceTokensIfExists() async throws {
+        
+    }
+    
+    @Test("Saving the sentence tokens for an article updates existing tokens and saves new ones")
+    func saveSentenceTokensUpdatesExistingTokensAndSavesNewOnes() async throws {
+        // test with some uncreated tokens and some pre-existing tokens
+    }
+    
+    @Test("Saving sentence tokens throws error if there is an index collision of a new token with an existing one")
+    func saveSentenceTokensThrowsIfIndexCollisionOfNewWithExisting() async throws {
+        // criteria for "new" is just that the ID is different
+    }
+    
+    @Test("Clearing sentence tokens clears all of the sentence tokens associated with the article")
+    func clearSentenceTokensClearsForOneArticleOnly() async throws {
+        // test sentence tokens for multiple articles, and try clearing just one set
+    }
+    
+    @Test("Saving an existing article updates its metadata")
+    func saveUpdatesExistingArticle() async throws {
+        
+    }
+    
+    @Test("Saving a new article creates it")
+    func saveCreatesNewArticle() async throws {
+        
+    }
+    
+    @Test("Saving a new article with tags creates any new tags")
+    func saveWithTagsCreatesNewTags() async throws {
+        // assume there can be a mix of existing + new tags by ID
+    }
+    
+    @Test("Deleting an article deletes the article")
+    func deleteDeletesTheArticle() async throws {
+        
+    }
+    
+    @Test("Deleting an article also deletes its sentence tokens")
+    func deleteDeletesSentenceTokens() async throws {
+        
+    }
+    
+    @Test("Deleting an article throws if the article is not found")
+    func deleteThrowsIfNotFound() async throws {
+        
+    }
 }

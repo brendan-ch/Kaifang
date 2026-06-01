@@ -22,7 +22,7 @@ public extension ArticleProvider {
     }
     
     struct Tag: Equatable, Sendable, Hashable {
-        let id: String
+        let id: UUID
         let name: String
     }
     

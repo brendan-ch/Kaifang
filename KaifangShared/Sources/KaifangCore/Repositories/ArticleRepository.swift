@@ -23,7 +23,7 @@ public final class ArticleRepository {
         return []
     }
     
-    public func find(_ id: UUID) async throws -> Article {
+    public func find(_ id: UUID) async throws -> Article? {
         fatalError("not implemented")
     }
     
@@ -41,6 +41,10 @@ public final class ArticleRepository {
     
     public func save(_ article: Article) async throws -> Article {
         fatalError("not implemented")
+    }
+    
+    public func delete(id: UUID) async throws {
+        
     }
     
     public func clear() async throws {
