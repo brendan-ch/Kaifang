@@ -42,13 +42,15 @@
         <attribute name="dateModified" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
     </entity>
     <entity name="CDFlashcard" representedClassName="CDFlashcard" parentEntity="CDEntityWithIDAndDateMetadata" syncable="YES" codeGenerationType="category">
+        <attribute name="contextTranslation" optional="YES" attributeType="String" allowsCloudEncryption="YES"/>
         <attribute name="dueDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="easeFactor" attributeType="Double" defaultValueString="2.5" usesScalarValueType="YES"/>
         <attribute name="interval" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="lastReviewedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="originalArticleText" optional="YES" attributeType="String" allowsCloudEncryption="YES"/>
+        <attribute name="originalContext" optional="YES" attributeType="String" allowsCloudEncryption="YES"/>
         <attribute name="originalWord" attributeType="String" defaultValueString="Empty word" allowsCloudEncryption="YES"/>
         <attribute name="repetitions" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="wordTranslation" optional="YES" attributeType="String" allowsCloudEncryption="YES"/>
         <relationship name="sentenceToken" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDArticleSentenceToken" inverseName="flashcards" inverseEntity="CDArticleSentenceToken"/>
     </entity>
     <entity name="CDTag" representedClassName="CDTag" parentEntity="CDEntityWithIDAndDateMetadata" syncable="YES" codeGenerationType="category">
