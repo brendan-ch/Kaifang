@@ -96,7 +96,10 @@ public extension FlashcardProvider {
         let articleId: String?
         
         /// Filter to only flashcards that are due.
-        let dueOnly: Bool
+        let dueOnly: Bool?
+        
+        /// Filter by the contents of the flashcard (original word, context, translation + context translation).
+        let contents: String?
     }
     
     enum SortCriteria: Hashable, Sendable {
