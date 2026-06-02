@@ -72,4 +72,15 @@ public extension ArticleProvider {
         case dateCreated(SortOrder)
         case title(SortOrder)
     }
+    
+    enum Error: Swift.Error, LocalizedError {
+        case notFound
+        
+        public var errorDescription: String? {
+            switch self {
+            case .notFound:
+                return "The article was not found."
+            }
+        }
+    }
 }

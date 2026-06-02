@@ -40,7 +40,7 @@ public final class ArticleRepository {
     }
     
     public func find(_ id: UUID) async throws -> Article? {
-        fatalError("not implemented")
+        return nil
     }
     
     public func getSentenceTokens(forArticleId id: UUID) async throws -> [SentenceToken] {

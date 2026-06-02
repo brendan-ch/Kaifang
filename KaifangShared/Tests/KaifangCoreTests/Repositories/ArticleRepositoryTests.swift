@@ -17,6 +17,8 @@ struct ArticleRepositoryTests {
     typealias Article = ArticleProvider.Article
     typealias FilterArguments = ArticleProvider.FilterArguments
     typealias SortCriteria = ArticleProvider.SortCriteria
+    typealias SentenceToken = SegmentationProvider.SentenceToken
+    typealias WordToken = SegmentationProvider.WordToken
     
     // MARK: Setup
     private let container: NSPersistentContainer
@@ -75,7 +77,7 @@ struct ArticleRepositoryTests {
             // Shares `newsTag` with Article Bravo. Unread. Single author. SC body.
             .init(
                 id: UUID(),
-                plainText: "市议会一致通过新 buses 巴士拨款,覆盖整个 region 城区。",
+                plainText: "市议会一致通过新型 buses 巴士拨款议案。该决议将覆盖整个 region 城区的公共交通时间表。下周起新线路开始试运营。",
                 title: "Alpha: Transit Budget 公共交通预算获市议会批准",
                 datePublished: Date(timeIntervalSince1970: 1_700_000_000),
                 dateRead: nil,
@@ -85,7 +87,7 @@ struct ArticleRepositoryTests {
             // Bridges all three tags; read. Two authors, sharing `author1` with Alpha. TC body.
             .init(
                 id: UUID(),
-                plainText: "研究團隊展示了穩定的 quantum 量子處理器原型。",
+                plainText: "研究團隊在會議上展示了穩定的 quantum 量子處理器原型。新架構顯著提升了運算性能與糾錯能力。論文已於本週正式發表。",
                 title: "Bravo: Quantum 量子計算重大突破",
                 datePublished: Date(timeIntervalSince1970: 1_710_000_000),
                 dateRead: Date(timeIntervalSince1970: 1_715_000_000),
@@ -95,7 +97,7 @@ struct ArticleRepositoryTests {
             // Shares `cultureTag` with Article Bravo. No publish date, unread. Co-authored. TC body.
             .init(
                 id: UUID(),
-                plainText: "傳統 dance 舞蹈與街頭藝術吸引了大批人群。",
+                plainText: "傳統 dance 舞蹈與街頭藝術在開幕表演中亮相。藝術家們吸引了大批熱情的觀眾。活動將持續整整三天。",
                 title: "Charlie: Weekend Festival 週末文化節亮點",
                 datePublished: nil,
                 dateRead: nil,
@@ -105,7 +107,7 @@ struct ArticleRepositoryTests {
             // No tags. Read. `author1` reused again to exercise duplicate-author cases. SC body.
             .init(
                 id: UUID(),
-                plainText: "尽管 weekend 期间 liquidity 流动性紧张,指数仍稳步上扬。",
+                plainText: "尽管 weekend 假期期间 liquidity 流动性紧张。主要指数仍稳步上扬。投资者保持谨慎乐观。",
                 title: "Delta: Markets 股市稳步上扬",
                 datePublished: Date(timeIntervalSince1970: 1_720_000_000),
                 dateRead: Date(timeIntervalSince1970: 1_725_000_000),
@@ -115,7 +117,7 @@ struct ArticleRepositoryTests {
             // No tags, no authors. Unread. SC body.
             .init(
                 id: UUID(),
-                plainText: "今晚 tonight 区域内没有重大事件报告。",
+                plainText: "今晚 tonight 整个区域内目前没有重大事件。各部门保持正常运转。气象台预报明日转晴。",
                 title: "Echo: Quiet Evening 宁静夜晚跨越 Region 全境",
                 datePublished: Date(timeIntervalSince1970: 1_730_000_000),
                 dateRead: nil,
@@ -131,7 +133,153 @@ struct ArticleRepositoryTests {
 
         return articles
     }
-    
+
+    /// Builds in-memory sentence tokens (with their embedded word tokens) for one of the sample
+    /// articles produced by ``getSampleArticles()``. Does NOT persist anything; pair with
+    /// ``ArticleRepository/saveSentenceTokens(_:forArticleId:)`` if persistence is needed.
+    ///
+    /// Each sample article maps to multiple ``SentenceToken``s — one per sentence in the body
+    /// (at least three per article). Word tokens are hand-curated in left-to-right order within
+    /// each sentence and exclude punctuation. ``SentenceToken/articleTextPositionStart`` is the
+    /// UTF-16 offset of the sentence within ``ArticleProvider/Article/plainText``;
+    /// ``WordToken/sentenceTextPositionStart`` is the UTF-16 offset of the word within its
+    /// containing sentence (not the article). Lookup is by ``ArticleProvider/Article/plainText``
+    /// since article IDs are regenerated on each ``getSampleArticles()`` call.
+    func getSentenceTokensForArticle(article: Article) async throws -> [SentenceToken] {
+        let plan: [(sentence: String, words: [String])]
+        switch article.plainText {
+        case "市议会一致通过新型 buses 巴士拨款议案。该决议将覆盖整个 region 城区的公共交通时间表。下周起新线路开始试运营。":
+            plan = [
+                (
+                    sentence: "市议会一致通过新型 buses 巴士拨款议案。",
+                    words: ["市议会", "一致", "通过", "新型", "buses", "巴士", "拨款", "议案"]
+                ),
+                (
+                    sentence: "该决议将覆盖整个 region 城区的公共交通时间表。",
+                    words: ["该", "决议", "将", "覆盖", "整个", "region", "城区", "的", "公共交通", "时间表"]
+                ),
+                (
+                    sentence: "下周起新线路开始试运营。",
+                    words: ["下周", "起", "新", "线路", "开始", "试", "运营"]
+                ),
+            ]
+        case "研究團隊在會議上展示了穩定的 quantum 量子處理器原型。新架構顯著提升了運算性能與糾錯能力。論文已於本週正式發表。":
+            plan = [
+                (
+                    sentence: "研究團隊在會議上展示了穩定的 quantum 量子處理器原型。",
+                    words: ["研究", "團隊", "在", "會議", "上", "展示", "了", "穩定", "的", "quantum", "量子", "處理器", "原型"]
+                ),
+                (
+                    sentence: "新架構顯著提升了運算性能與糾錯能力。",
+                    words: ["新", "架構", "顯著", "提升", "了", "運算", "性能", "與", "糾錯", "能力"]
+                ),
+                (
+                    sentence: "論文已於本週正式發表。",
+                    words: ["論文", "已", "於", "本週", "正式", "發表"]
+                ),
+            ]
+        case "傳統 dance 舞蹈與街頭藝術在開幕表演中亮相。藝術家們吸引了大批熱情的觀眾。活動將持續整整三天。":
+            plan = [
+                (
+                    sentence: "傳統 dance 舞蹈與街頭藝術在開幕表演中亮相。",
+                    words: ["傳統", "dance", "舞蹈", "與", "街頭", "藝術", "在", "開幕", "表演", "中", "亮相"]
+                ),
+                (
+                    sentence: "藝術家們吸引了大批熱情的觀眾。",
+                    words: ["藝術家", "們", "吸引", "了", "大批", "熱情", "的", "觀眾"]
+                ),
+                (
+                    sentence: "活動將持續整整三天。",
+                    words: ["活動", "將", "持續", "整整", "三", "天"]
+                ),
+            ]
+        case "尽管 weekend 假期期间 liquidity 流动性紧张。主要指数仍稳步上扬。投资者保持谨慎乐观。":
+            plan = [
+                (
+                    sentence: "尽管 weekend 假期期间 liquidity 流动性紧张。",
+                    words: ["尽管", "weekend", "假期", "期间", "liquidity", "流动性", "紧张"]
+                ),
+                (
+                    sentence: "主要指数仍稳步上扬。",
+                    words: ["主要", "指数", "仍", "稳步", "上扬"]
+                ),
+                (
+                    sentence: "投资者保持谨慎乐观。",
+                    words: ["投资者", "保持", "谨慎", "乐观"]
+                ),
+            ]
+        case "今晚 tonight 整个区域内目前没有重大事件。各部门保持正常运转。气象台预报明日转晴。":
+            plan = [
+                (
+                    sentence: "今晚 tonight 整个区域内目前没有重大事件。",
+                    words: ["今晚", "tonight", "整个", "区域", "内", "目前", "没有", "重大", "事件"]
+                ),
+                (
+                    sentence: "各部门保持正常运转。",
+                    words: ["各", "部门", "保持", "正常", "运转"]
+                ),
+                (
+                    sentence: "气象台预报明日转晴。",
+                    words: ["气象台", "预报", "明日", "转晴"]
+                ),
+            ]
+        default:
+            fatalError("No sample sentence tokens defined for article body: \(article.plainText)")
+        }
+
+        var sentenceTokens: [SentenceToken] = []
+        var sentenceSearchStart = article.plainText.startIndex
+        for (sentenceIndex, entry) in plan.enumerated() {
+            guard let sentenceRange = article.plainText.range(
+                of: entry.sentence,
+                range: sentenceSearchStart..<article.plainText.endIndex
+            ) else {
+                fatalError("Sentence '\(entry.sentence)' not found in article body '\(article.plainText)'.")
+            }
+            let articleUtf16Start = article.plainText.utf16.distance(
+                from: article.plainText.utf16.startIndex,
+                to: sentenceRange.lowerBound.samePosition(in: article.plainText.utf16)!
+            )
+
+            var wordTokens: [WordToken] = []
+            var wordSearchStart = entry.sentence.startIndex
+            for (wordIndex, word) in entry.words.enumerated() {
+                guard let wordRange = entry.sentence.range(
+                    of: word,
+                    range: wordSearchStart..<entry.sentence.endIndex
+                ) else {
+                    fatalError("Word '\(word)' not found in sentence '\(entry.sentence)'.")
+                }
+                let sentenceUtf16Start = entry.sentence.utf16.distance(
+                    from: entry.sentence.utf16.startIndex,
+                    to: wordRange.lowerBound.samePosition(in: entry.sentence.utf16)!
+                )
+                wordTokens.append(
+                    WordToken(
+                        id: UUID(),
+                        tokenText: word,
+                        sentenceTextPositionStart: Int32(sentenceUtf16Start),
+                        wordIndexInSentence: Int32(wordIndex)
+                    )
+                )
+                wordSearchStart = wordRange.upperBound
+            }
+
+            sentenceTokens.append(
+                SentenceToken(
+                    id: UUID(),
+                    articleTextPositionStart: Int32(articleUtf16Start),
+                    sentenceIndexInArticle: Int32(sentenceIndex),
+                    tokenText: entry.sentence,
+                    wordTokens: wordTokens
+                )
+            )
+            sentenceSearchStart = sentenceRange.upperBound
+        }
+
+        return sentenceTokens
+    }
+
     func getDefaultSortCriteria() async throws -> SortCriteria {
         .title(.forward)
     }
@@ -139,7 +287,7 @@ struct ArticleRepositoryTests {
     // MARK: Tags and authors
     
     @Test("Getting all tags gets them in a set")
-    func getTagsReturnsInAlphabeticalOrder() async throws {
+    func getTagsReturnsAllTagsInSet() async throws {
         let expectedTags = getSampleTags()
         _ = try await repository.saveTags(expectedTags)
         
@@ -151,7 +299,7 @@ struct ArticleRepositoryTests {
     }
     
     @Test("Getting all authors gets them in a set")
-    func getAuthorsReturnsInAlphabeticalOrder() async throws {
+    func getAuthorsReturnsAllTagsInSet() async throws {
         let expectedAuthors = getSampleAuthors()
         _ = try await repository.saveAuthors(expectedAuthors)
         
@@ -341,37 +489,175 @@ struct ArticleRepositoryTests {
     
     @Test("Finding an article by UUID returns the article if found")
     func findReturnsArticle() async throws {
+        let articles = try await generateSavedExpectedArticles()
+        let expectedArticle = articles[0]
         
+        let resultArticle = try await repository.find(expectedArticle.id)
+        #expect(resultArticle == expectedArticle)
     }
     
     @Test("Finding an article by UUID returns nil if the article is not found")
     func findReturnsNilIfNotFound() async throws {
-        
+        let resultArticle = try await repository.find(UUID())
+        #expect(resultArticle == nil)
     }
     
     @Test("Getting the sentence tokens for an article returns an empty array if they don't exist")
     func getSentenceTokensReturnsNilIfNonexistent() async throws {
+        let articles = try await generateSavedExpectedArticles()
+        let article = articles[0]
         
+        let resultSentenceTokens = try await repository.getSentenceTokens(forArticleId: article.id)
+        #expect(resultSentenceTokens.isEmpty)
     }
     
-    @Test("Getting the sentence tokens for an article returns the sentence tokens ordered by index")
+    @Test("Getting the sentence tokens for an article throws if the article doesn't exist")
+    func getSentenceTokensThrowsIfArticleDoesNotExist() async throws {
+        await #expect(throws: ArticleProvider.Error.notFound) {
+            try await repository.getSentenceTokens(forArticleId: UUID())
+        }
+    }
+    
+    @Test("Saving and getting the sentence tokens for an article returns the sentence tokens ordered by index")
     func getSentenceTokensReturnsOrderedSentenceTokensIfExists() async throws {
+        let articles = try await generateSavedExpectedArticles()
         
+        for article in articles {
+            // note that sentence tokens passed to save may not be in index order
+            var sentenceTokens = try await getSentenceTokensForArticle(article: article)
+            sentenceTokens = try await repository.saveSentenceTokens(sentenceTokens, forArticleId: article.id)
+            
+            let resultTokens = try await repository.getSentenceTokens(forArticleId: article.id)
+            #expect(sentenceTokens == resultTokens)
+        }
     }
     
     @Test("Saving the sentence tokens for an article updates existing tokens and saves new ones")
     func saveSentenceTokensUpdatesExistingTokensAndSavesNewOnes() async throws {
-        // test with some uncreated tokens and some pre-existing tokens
+        let articles = try await generateSavedExpectedArticles()
+        
+        for article in articles {
+            var sentenceTokens = try await getSentenceTokensForArticle(article: article)
+            
+            // first save
+            var firstSaveSentenceTokens = [sentenceTokens[0], sentenceTokens[2]]
+            firstSaveSentenceTokens = try await repository.saveSentenceTokens(firstSaveSentenceTokens, forArticleId: article.id)
+            
+            // simulate a modification of an existing token, then save all tokens
+            sentenceTokens[0] = SentenceToken(
+                id: sentenceTokens[0].id,
+                articleTextPositionStart: sentenceTokens[0].articleTextPositionStart,
+                sentenceIndexInArticle: sentenceTokens[0].sentenceIndexInArticle,
+                tokenText: "Updated text",
+                wordTokens: [
+                    .init(
+                        id: UUID(),
+                        tokenText: "Updated",
+                        sentenceTextPositionStart: 0,
+                        wordIndexInSentence: 0,
+                    ),
+                    .init(
+                        id: UUID(),
+                        tokenText: "text",
+                        sentenceTextPositionStart: 8,
+                        wordIndexInSentence: 1
+                    )
+                ],
+            )
+            
+            // second save
+            sentenceTokens = try await repository.saveSentenceTokens(sentenceTokens, forArticleId: article.id)
+            
+            let resultTokens = try await repository.getSentenceTokens(forArticleId: article.id)
+            #expect(resultTokens == sentenceTokens.sorted { $0.sentenceIndexInArticle < $1.sentenceIndexInArticle })
+        }
     }
     
-    @Test("Saving sentence tokens throws error if there is an index collision of a new token with an existing one")
+    @Test("Saving sentence tokens throws error if there is an index collision of a new sentence token with an existing one")
     func saveSentenceTokensThrowsIfIndexCollisionOfNewWithExisting() async throws {
-        // criteria for "new" is just that the ID is different
+        let articles = try await generateSavedExpectedArticles()
+        
+        for article in articles {
+            var sentenceTokens = try await getSentenceTokensForArticle(article: article)
+            let count = sentenceTokens.count
+            sentenceTokens = try await repository.saveSentenceTokens(sentenceTokens, forArticleId: article.id)
+            try #require(sentenceTokens.count == count)
+            
+            sentenceTokens[0] = .init(
+                id: UUID(),  // criteria for "new" is just that the ID is different
+                articleTextPositionStart: sentenceTokens[0].articleTextPositionStart,
+                sentenceIndexInArticle: 0,
+                tokenText: sentenceTokens[0].tokenText,
+                wordTokens: sentenceTokens[0].wordTokens
+            )
+            
+            await #expect(throws: SegmentationProvider.Error.tokenAlreadyExistsAtIndex(index: 0)) {
+                try await repository.saveSentenceTokens(sentenceTokens, forArticleId: article.id)
+            }
+        }
+    }
+    
+    @Test("Saving and getting sentence tokens returns a collection ordered by the stored index")
+    func saveAndGetSentenceTokensReturnsCollectionOrderedByStoredIndex() async throws {
+        let articles = try await generateSavedExpectedArticles()
+        
+        for article in articles {
+            var sentenceTokens = try await getSentenceTokensForArticle(article: article)
+            let expectedSentenceTokens = sentenceTokens
+            sentenceTokens.shuffle()
+            
+            sentenceTokens = try await repository.saveSentenceTokens(sentenceTokens, forArticleId: article.id)
+            #expect(sentenceTokens == expectedSentenceTokens)
+            
+            let resultSentenceTokens = try await repository.getSentenceTokens(forArticleId: article.id)
+            #expect(resultSentenceTokens == expectedSentenceTokens)
+        }
+    }
+    
+    @Test("Saving and getting sentence tokens returns nested word tokens that are ordered by the stored index")
+    func saveAndGetSentenceTokensReturnsWordTokensOrderedByStoredIndex() async throws {
+        let articles = try await generateSavedExpectedArticles()
+        
+        for article in articles {
+            var sentenceTokens = try await getSentenceTokensForArticle(article: article)
+            let expectedSentenceTokens = sentenceTokens
+            sentenceTokens[0] = SentenceToken(
+                id: sentenceTokens[0].id,
+                articleTextPositionStart: sentenceTokens[0].articleTextPositionStart,
+                sentenceIndexInArticle: sentenceTokens[0].sentenceIndexInArticle,
+                tokenText: sentenceTokens[0].tokenText,
+                wordTokens: sentenceTokens[0].wordTokens.shuffled(),
+            )
+            sentenceTokens = try await repository.saveSentenceTokens(sentenceTokens, forArticleId: article.id)
+            #expect(sentenceTokens == expectedSentenceTokens)
+            
+            let resultSentenceTokens = try await repository.getSentenceTokens(forArticleId: article.id)
+            #expect(resultSentenceTokens == expectedSentenceTokens)
+        }
     }
     
     @Test("Clearing sentence tokens clears all of the sentence tokens associated with the article")
     func clearSentenceTokensClearsForOneArticleOnly() async throws {
+        let articles = try await generateSavedExpectedArticles()
+        
         // test sentence tokens for multiple articles, and try clearing just one set
+        for article in articles {
+            let sentenceTokens = try await getSentenceTokensForArticle(article: article)
+            _ = try await repository.saveSentenceTokens(sentenceTokens, forArticleId: article.id)
+        }
+        
+        guard let first = articles.first else {
+            Issue.record("First article is missing.")
+            return
+        }
+        
+        try await repository.clearSentenceTokens(forArticleId: first.id)
+        
+        let otherArticles = articles[1...]
+        for article in otherArticles {
+            let sentenceTokens = try await repository.getSentenceTokens(forArticleId: article.id)
+            #expect(sentenceTokens.count > 0)
+        }
     }
     
     @Test("Saving an existing article updates its metadata")
