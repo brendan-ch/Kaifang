@@ -14,7 +14,7 @@
         <attribute name="wordIndexInSentence" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="sentence" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDArticleSentenceToken" inverseName="words" inverseEntity="CDArticleSentenceToken"/>
     </entity>
-    <entity name="CDAuthor" representedClassName="CDAuthor" syncable="YES" codeGenerationType="class">
+    <entity name="CDAuthor" representedClassName="CDAuthor" parentEntity="CDEntityWithIDAndDateMetadata" syncable="YES" codeGenerationType="category">
         <attribute name="name" optional="YES" attributeType="String" allowsCloudEncryption="YES"/>
         <relationship name="articles" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CDBaseArticle" inverseName="authors" inverseEntity="CDBaseArticle"/>
     </entity>
