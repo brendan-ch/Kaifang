@@ -9,13 +9,16 @@ import CoreData
 import Foundation
 
 public extension SegmentationProvider {
-    enum Error: Swift.Error, LocalizedError {
+    enum Error: Swift.Error, LocalizedError, Sendable, Equatable {
         case failedConversionToDomainModel
+        case tokenAlreadyExistsAtIndex(index: Int32)
 
         public var errorDescription: String? {
             switch self {
             case .failedConversionToDomainModel:
                 return "Unable to convert a Core Data entity to a domain model."
+            case .tokenAlreadyExistsAtIndex(let index):
+                return "A token already exists at index \(index)."
             }
         }
     }
