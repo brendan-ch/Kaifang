@@ -73,13 +73,19 @@ public extension ArticleProvider {
         case title(SortOrder)
     }
     
-    enum Error: Swift.Error, LocalizedError {
+    enum Error: Swift.Error, LocalizedError, Sendable, Equatable {
         case notFound
-        
+        case tagNameConflict(name: String)
+        case authorNameConflict(name: String)
+
         public var errorDescription: String? {
             switch self {
             case .notFound:
                 return "The article was not found."
+            case .tagNameConflict(let name):
+                return "A tag with the name \"\(name)\" already exists."
+            case .authorNameConflict(let name):
+                return "An author with the name \"\(name)\" already exists."
             }
         }
     }

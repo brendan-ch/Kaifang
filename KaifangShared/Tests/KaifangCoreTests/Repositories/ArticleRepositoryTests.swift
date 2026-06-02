@@ -660,50 +660,272 @@ struct ArticleRepositoryTests {
         }
     }
     
-    @Test("Saving an existing article updates its metadata")
+    @Test("Saving an individual existing article updates its metadata")
     func saveUpdatesExistingArticle() async throws {
+        var articles = try await generateSavedExpectedArticles()
         
+        for i in 0..<articles.count {
+            let article = articles[i]
+            let updatedArticle = Article(
+                id: article.id,
+                plainText: "Updated plain text",
+                title: "Updated title \(i)",
+                datePublished: nil,
+                dateRead: nil,
+                tags: [],
+                authors: []
+            )
+            articles[i] = updatedArticle
+            
+            _ = try await repository.save(updatedArticle)
+        }
+        
+        let resultArticles = try await repository.list(
+            filterBy: FilterArguments(
+                tags: nil,
+                titleAndContents: nil,
+                unreadOnly: nil
+            ),
+            sortBy: .title(.forward)
+        )
+        #expect(resultArticles == articles)
     }
     
-    @Test("Saving a new article creates it")
+    @Test("Saving a individual new article creates it")
     func saveCreatesNewArticle() async throws {
+        let articles = getSampleArticles()
         
+        for article in articles {
+            let article = try await repository.save(article)
+            let resultArticle = try await repository.find(article.id)
+            #expect(resultArticle == article)
+        }
     }
     
-    @Test("Saving a new article with tags creates any new tags")
+    @Test("Saving a new individual article with tags creates any new tags")
     func saveWithTagsCreatesNewTags() async throws {
-        // assume there can be a mix of existing + new tags by ID
+        var existingTags = getSampleTags()
+        existingTags = try await repository.saveTags(existingTags)
+        try #require(existingTags.count > 0)
+        
+        let articles = getSampleArticles()
+        guard let article = articles.first else {
+            Issue.record("No sample articles.")
+            return
+        }
+        
+        var tags = article.tags
+        tags.formUnion(existingTags)
+        
+        _ = try await repository.save(article)
+        
+        let resultTags = try await repository.getTags()
+        #expect(resultTags == tags)
     }
     
-    @Test("Saving a new article with tags having conflicting names with existing tags throws")
+    @Test("Saving a new individual article with tags having conflicting names with existing tags throws")
     func saveWithTagsHavingConflictingNamesThrows() async throws {
-        
+        // pre-existing tag named "News" with its own ID; the sample articles include a `newsTag`
+        // with a different ID but the same name → conflict on save.
+        let conflictingTagName = "News"
+        let existingTag = Tag(id: UUID(), name: conflictingTagName)
+        _ = try await repository.saveTags([existingTag])
+
+        let articles = getSampleArticles()
+        guard let article = articles.first(where: { article in
+            article.tags.contains { $0.name == conflictingTagName }
+        }) else {
+            Issue.record("No sample article has a tag named \(conflictingTagName).")
+            return
+        }
+        try #require(!article.tags.contains { $0.id == existingTag.id })
+
+        await #expect(throws: ArticleProvider.Error.tagNameConflict(name: conflictingTagName)) {
+            _ = try await repository.save(article)
+        }
     }
-    
-    @Test("Saving a new article with authors having conflicting names with existing authors throws")
+
+    @Test("Saving a new individual article with authors having conflicting names with existing authors throws")
     func saveWithAuthorsHavingConflictingNamesThrows() async throws {
-        
+        let conflictingAuthorName = "Author 1"
+        let existingAuthor = Author(id: UUID(), name: conflictingAuthorName)
+        _ = try await repository.saveAuthors([existingAuthor])
+
+        let articles = getSampleArticles()
+        guard let article = articles.first(where: { article in
+            article.authors.contains { $0.name == conflictingAuthorName }
+        }) else {
+            Issue.record("No sample article has an author named \(conflictingAuthorName).")
+            return
+        }
+        try #require(!article.authors.contains { $0.id == existingAuthor.id })
+
+        await #expect(throws: ArticleProvider.Error.authorNameConflict(name: conflictingAuthorName)) {
+            _ = try await repository.save(article)
+        }
+    }
+
+    @Test("Saving multiple articles with tags having conflicting names with existing tags throws")
+    func saveMultipleWithTagsHavingConflictingNamesThrows() async throws {
+        let conflictingTagName = "News"
+        let existingTag = Tag(id: UUID(), name: conflictingTagName)
+        _ = try await repository.saveTags([existingTag])
+
+        let articles = getSampleArticles()
+        try #require(articles.contains { article in
+            article.tags.contains { $0.name == conflictingTagName && $0.id != existingTag.id }
+        })
+
+        await #expect(throws: ArticleProvider.Error.tagNameConflict(name: conflictingTagName)) {
+            _ = try await repository.save(articles)
+        }
+    }
+
+    @Test("Saving multiple articles with authors having conflicting names with existing authors throws")
+    func saveMultipleWithAuthorsHavingConflictingNamesThrows() async throws {
+        let conflictingAuthorName = "Author 1"
+        let existingAuthor = Author(id: UUID(), name: conflictingAuthorName)
+        _ = try await repository.saveAuthors([existingAuthor])
+
+        let articles = getSampleArticles()
+        try #require(articles.contains { article in
+            article.authors.contains { $0.name == conflictingAuthorName && $0.id != existingAuthor.id }
+        })
+
+        await #expect(throws: ArticleProvider.Error.authorNameConflict(name: conflictingAuthorName)) {
+            _ = try await repository.save(articles)
+        }
+    }
+
+    @Test("Saving a list of articles where some already exist updates the existing ones, and creates the new ones")
+    func saveMultipleWithSomeExistingUpdatesExistingAndCreatesNew() async throws {
+        var articles = try await generateSavedExpectedArticles()
+
+        // update the first two pre-existing articles in place (same id, different metadata)
+        for i in 0..<2 {
+            articles[i] = Article(
+                id: articles[i].id,
+                plainText: "Updated plain text \(i)",
+                title: "Updated title \(i)",
+                datePublished: nil,
+                dateRead: nil,
+                tags: [],
+                authors: []
+            )
+        }
+
+        // tack on two brand-new articles
+        let newArticles: [Article] = [
+            .init(
+                id: UUID(),
+                plainText: "Brand new article body one.",
+                title: "Yankee: New Article One",
+                datePublished: nil,
+                dateRead: nil,
+                tags: [],
+                authors: []
+            ),
+            .init(
+                id: UUID(),
+                plainText: "Brand new article body two.",
+                title: "Zulu: New Article Two",
+                datePublished: nil,
+                dateRead: nil,
+                tags: [],
+                authors: []
+            ),
+        ]
+
+        let combined = articles + newArticles
+        _ = try await repository.save(combined)
+
+        let resultArticles = try await repository.list(
+            filterBy: FilterArguments(tags: nil, titleAndContents: nil, unreadOnly: nil),
+            sortBy: getDefaultSortCriteria()
+        )
+        let expectedSorted = combined.sorted { $0.title < $1.title }
+        #expect(resultArticles == expectedSorted)
     }
 
     @Test("Deleting an article deletes the article")
     func deleteDeletesTheArticle() async throws {
-        
+        let articles = try await generateSavedExpectedArticles()
+        guard let articleToDelete = articles.first else {
+            Issue.record("No articles to delete.")
+            return
+        }
+
+        try await repository.delete(id: articleToDelete.id)
+
+        let resultArticle = try await repository.find(articleToDelete.id)
+        #expect(resultArticle == nil)
     }
-    
+
     @Test("Deleting an article also deletes its sentence tokens")
     func deleteDeletesSentenceTokens() async throws {
-        
+        let articles = try await generateSavedExpectedArticles()
+        guard let article = articles.first else {
+            Issue.record("No articles to delete.")
+            return
+        }
+
+        let sentenceTokens = try await getSentenceTokensForArticle(article: article)
+        _ = try await repository.saveSentenceTokens(sentenceTokens, forArticleId: article.id)
+
+        try await repository.delete(id: article.id)
+
+        await #expect(throws: ArticleProvider.Error.notFound) {
+            _ = try await repository.getSentenceTokens(forArticleId: article.id)
+        }
     }
-    
+
     @Test("Deleting an article also deletes associated tags if no more articles point to them")
     func deleteDeletesAssociatedTagsIfNoArticlesPointToThem() async throws {
-        
+        let articles = try await generateSavedExpectedArticles()
+
+        // Bravo carries [News, Tech, Culture]. Deleting it orphans only Tech — News is still held
+        // by Alpha and Culture is still held by Charlie.
+        guard let bravo = articles.first(where: { $0.title.hasPrefix("Bravo") }) else {
+            Issue.record("Bravo article missing from sample set.")
+            return
+        }
+
+        let tagsBefore = try await repository.getTags()
+        try #require(tagsBefore.contains { $0.name == "Tech" })
+        try #require(tagsBefore.contains { $0.name == "News" })
+        try #require(tagsBefore.contains { $0.name == "Culture" })
+
+        try await repository.delete(id: bravo.id)
+
+        let tagsAfter = try await repository.getTags()
+        #expect(!tagsAfter.contains { $0.name == "Tech" })
+        #expect(tagsAfter.contains { $0.name == "News" })
+        #expect(tagsAfter.contains { $0.name == "Culture" })
     }
-    
-    // unlike tags, authors do not get automatically deleted
-    
+
+    @Test("Deleting an article does not delete associated authors even if no more articles point to them")
+    func deleteDoesNotDeleteAssociatedAuthors() async throws {
+        let articles = try await generateSavedExpectedArticles()
+
+        // Charlie's [author3, author4] are unique to Charlie among the sample set. After deleting
+        // Charlie, both authors should still exist even though no article references them.
+        guard let charlie = articles.first(where: { $0.title.hasPrefix("Charlie") }) else {
+            Issue.record("Charlie article missing from sample set.")
+            return
+        }
+        let charlieAuthorNames = Set(charlie.authors.map(\.name))
+        try #require(!charlieAuthorNames.isEmpty)
+
+        try await repository.delete(id: charlie.id)
+
+        let remainingAuthorNames = Set(try await repository.getAuthors().map(\.name))
+        #expect(charlieAuthorNames.isSubset(of: remainingAuthorNames))
+    }
+
     @Test("Deleting an article throws if the article is not found")
     func deleteThrowsIfNotFound() async throws {
-        
+        await #expect(throws: ArticleProvider.Error.notFound) {
+            try await repository.delete(id: UUID())
+        }
     }
 }
