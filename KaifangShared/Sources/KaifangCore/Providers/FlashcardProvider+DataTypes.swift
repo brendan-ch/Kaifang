@@ -90,6 +90,21 @@ public extension FlashcardProvider {
         let sentenceToken: SegmentationProvider.SentenceToken?
     }
     
+    struct FilterArguments {
+        /// When passed, only return flashcards for the given article.
+        /// Returns an empty list if the article doesn't exist.
+        let articleId: String?
+        
+        /// Filter to only flashcards that are due.
+        let dueOnly: Bool
+    }
+    
+    enum SortCriteria: Hashable, Sendable {
+        case dueDate(SortOrder)
+        case dateModified(SortOrder)
+        case dateCreated(SortOrder)
+    }
+    
     enum Error: Swift.Error, LocalizedError {
         case failedConversionToDomainModel
         
