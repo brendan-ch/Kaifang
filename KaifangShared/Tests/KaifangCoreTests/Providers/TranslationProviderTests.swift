@@ -91,7 +91,7 @@ struct TranslationProviderTests {
 
 // MARK: - Stub model provider
 
-private actor StubModelProvider: TranslationModel.Provider {
+internal actor StubModelProvider: TranslationModel.Provider {
     private(set) var receivedQueries: [TranslationProvider.LookupArguments] = []
     private let response: TranslationProvider.Translation
 

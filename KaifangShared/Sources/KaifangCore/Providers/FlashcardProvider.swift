@@ -6,5 +6,9 @@
 //
 
 public final class FlashcardProvider {
+    private let repository: FlashcardRepository
     
+    init(repository: FlashcardRepository) {
+        self.repository = repository
+    }
 }

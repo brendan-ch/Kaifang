@@ -286,6 +286,7 @@ struct ArticleRepositoryTests {
             sentenceTokens.append(
                 SentenceToken(
                     id: UUID(),
+                    articleId: article.id,
                     articleTextPositionStart: Int32(articleUtf16Start),
                     sentenceIndexInArticle: Int32(sentenceIndex),
                     tokenText: entry.sentence,
@@ -340,7 +341,7 @@ struct ArticleRepositoryTests {
         #expect(authors.isEmpty)
     }
     
-    // MARK: Filtering and sorting
+    // MARK: Listing, filtering and sorting
     
     // note that tag filter tests require a different shape than title/content filters, since
     // tags are their own data entity
@@ -520,6 +521,8 @@ struct ArticleRepositoryTests {
         #expect(resultArticle == nil)
     }
     
+    // MARK: Sentence tokens
+    
     @Test("Getting the sentence tokens for an article returns an empty array if they don't exist")
     func getSentenceTokensReturnsEmptyArrayIfNonexistent() async throws {
         let articles = try await generateSavedExpectedArticles()
@@ -564,6 +567,7 @@ struct ArticleRepositoryTests {
             // simulate a modification of an existing token, then save all tokens
             sentenceTokens[0] = SentenceToken(
                 id: sentenceTokens[0].id,
+                articleId: sentenceTokens[0].articleId,
                 articleTextPositionStart: sentenceTokens[0].articleTextPositionStart,
                 sentenceIndexInArticle: sentenceTokens[0].sentenceIndexInArticle,
                 tokenText: "Updated text",
@@ -603,6 +607,7 @@ struct ArticleRepositoryTests {
             
             sentenceTokens[0] = .init(
                 id: UUID(),  // criteria for "new" is just that the ID is different
+                articleId: sentenceTokens[0].articleId,
                 articleTextPositionStart: sentenceTokens[0].articleTextPositionStart,
                 sentenceIndexInArticle: 0,
                 tokenText: sentenceTokens[0].tokenText,
@@ -641,6 +646,7 @@ struct ArticleRepositoryTests {
             let expectedSentenceTokens = sentenceTokens
             sentenceTokens[0] = SentenceToken(
                 id: sentenceTokens[0].id,
+                articleId: sentenceTokens[0].articleId,
                 articleTextPositionStart: sentenceTokens[0].articleTextPositionStart,
                 sentenceIndexInArticle: sentenceTokens[0].sentenceIndexInArticle,
                 tokenText: sentenceTokens[0].tokenText,
@@ -677,6 +683,8 @@ struct ArticleRepositoryTests {
             #expect(sentenceTokens.count > 0)
         }
     }
+    
+    // MARK: Saving
     
     @Test("Saving an individual existing article updates its metadata")
     func saveUpdatesExistingArticle() async throws {
@@ -864,6 +872,8 @@ struct ArticleRepositoryTests {
         let expectedSorted = combined.sorted { $0.title.localizedCompare($1.title) == .orderedAscending }
         #expect(resultArticles == expectedSorted)
     }
+    
+    // MARK: Deletion
 
     @Test("Deleting an article deletes the article")
     func deleteDeletesTheArticle() async throws {
