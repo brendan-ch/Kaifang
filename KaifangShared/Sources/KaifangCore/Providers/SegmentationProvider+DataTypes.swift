@@ -47,6 +47,7 @@ public extension SegmentationProvider {
     /// Maps to ``CDArticleSentenceToken``.
     struct SentenceToken: Equatable, Sendable {
         let id: UUID
+        let articleId: UUID?
         let articleTextPositionStart: Int32
         let sentenceIndexInArticle: Int32
         let tokenText: String
@@ -69,6 +70,7 @@ public extension SegmentationProvider {
 
             return SentenceToken(
                 id: id,
+                articleId: coreData.article?.id,
                 articleTextPositionStart: coreData.articleTextPositionStart,
                 sentenceIndexInArticle: coreData.sentenceIndexInArticle,
                 tokenText: tokenText,
