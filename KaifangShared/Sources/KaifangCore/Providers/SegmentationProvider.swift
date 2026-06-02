@@ -27,7 +27,7 @@ public final class SegmentationProvider {
         self.tokenizer = tokenizer
     }
 
-    public func sentences(in text: String) async -> [SentenceToken] {
+    public func sentences(in text: String, forArticleId articleId: UUID? = nil) async -> [SentenceToken] {
         let ranges = await tokenizer.tokens(unit: .sentence, in: text)
         var sentenceTokens: [SentenceToken] = []
 
@@ -39,6 +39,7 @@ public final class SegmentationProvider {
             sentenceTokens.append(
                 SentenceToken(
                     id: UUID(),
+                    articleId: articleId,
                     articleTextPositionStart: Int32(range.lowerBound.utf16Offset(in: text)),
                     sentenceIndexInArticle: Int32(i),
                     tokenText: tokenText,
