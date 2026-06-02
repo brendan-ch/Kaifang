@@ -62,6 +62,32 @@ public extension FlashcardProvider {
                 dateModified: dateModified
             )
         }
+        
+        static func fromCreateArgs(_ args: FlashcardCreateArguments) -> Self {
+            return Flashcard(
+                id: UUID(),
+                dueDate: Date(),
+                easeFactor: 2.5,
+                interval: 0,
+                lastReviewedAt: nil,
+                repetitions: 0,
+                sentenceToken: args.sentenceToken,
+                originalWord: args.originalWord,
+                originalContext: args.originalContext,
+                wordTranslation: args.wordTranslation,
+                contextTranslation: args.contextTranslation,
+                dateCreated: Date(),
+                dateModified: Date()
+            )
+        }
+    }
+    
+    struct FlashcardCreateArguments {
+        let originalWord: String
+        let originalContext: String?
+        let wordTranslation: String?
+        let contextTranslation: String?
+        let sentenceToken: SegmentationProvider.SentenceToken?
     }
     
     enum Error: Swift.Error, LocalizedError {
