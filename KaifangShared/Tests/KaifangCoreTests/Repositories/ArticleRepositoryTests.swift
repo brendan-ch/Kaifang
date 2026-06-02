@@ -299,7 +299,7 @@ struct ArticleRepositoryTests {
     }
     
     @Test("Getting all authors gets them in a set")
-    func getAuthorsReturnsAllTagsInSet() async throws {
+    func getAuthorsReturnsAllAuthorsInSet() async throws {
         let expectedAuthors = getSampleAuthors()
         _ = try await repository.saveAuthors(expectedAuthors)
         
@@ -310,14 +310,14 @@ struct ArticleRepositoryTests {
         #expect(resultingAuthors.contains { $0.name == "Author 3" })
     }
     
-    @Test("Getting all tags returns empty array if no tags exist")
-    func getTagsReturnsEmptyArrayIfNonexistent() async throws {
+    @Test("Getting all tags returns an empty set if no tags exist")
+    func getTagsReturnsEmptySetIfNonexistent() async throws {
         let tags = try await repository.getTags()
         #expect(tags.isEmpty)
     }
     
-    @Test("Getting all authors returns empty array if no authors exist")
-    func getAuthorsReturnsEmptyArrayIfNonexistent() async throws {
+    @Test("Getting all authors returns an empty set if no authors exist")
+    func getAuthorsReturnsEmptySetIfNonexistent() async throws {
         let authors = try await repository.getAuthors()
         #expect(authors.isEmpty)
     }
@@ -343,7 +343,7 @@ struct ArticleRepositoryTests {
                 $0.name.localizedStandardCompare(tagName) == .orderedSame
             }
         }.sorted {
-            $0.title < $1.title
+            $0.title.localizedCompare($1.title) == .orderedAscending
         }
         try #require(expectedArticles.count > 0)
         
@@ -373,7 +373,7 @@ struct ArticleRepositoryTests {
         let expectedArticles = try await generateSavedExpectedArticles().filter {
             $0.title.localizedCaseInsensitiveContains(keyword) || $0.plainText.localizedCaseInsensitiveContains(keyword)
         }.sorted {
-            $0.title < $1.title
+            $0.title.localizedCompare($1.title) == .orderedAscending
         }
         try #require(expectedArticles.count > 0)
         
@@ -393,9 +393,9 @@ struct ArticleRepositoryTests {
     @Test("Filtering by unread only filters out read articles")
     func filterByUnreadOnlyFiltersOutReadArticles() async throws {
         let expectedArticles = try await generateSavedExpectedArticles().filter {
-            $0.dateRead != nil
+            $0.dateRead == nil
         }.sorted {
-            $0.title < $1.title
+            $0.title.localizedCompare($1.title) == .orderedAscending
         }
         try #require(expectedArticles.count > 0)
         
@@ -503,7 +503,7 @@ struct ArticleRepositoryTests {
     }
     
     @Test("Getting the sentence tokens for an article returns an empty array if they don't exist")
-    func getSentenceTokensReturnsNilIfNonexistent() async throws {
+    func getSentenceTokensReturnsEmptyArrayIfNonexistent() async throws {
         let articles = try await generateSavedExpectedArticles()
         let article = articles[0]
         
@@ -691,7 +691,7 @@ struct ArticleRepositoryTests {
         #expect(resultArticles == articles)
     }
     
-    @Test("Saving a individual new article creates it")
+    @Test("Saving an individual new article creates it")
     func saveCreatesNewArticle() async throws {
         let articles = getSampleArticles()
         
@@ -843,7 +843,7 @@ struct ArticleRepositoryTests {
             filterBy: FilterArguments(tags: nil, titleAndContents: nil, unreadOnly: nil),
             sortBy: getDefaultSortCriteria()
         )
-        let expectedSorted = combined.sorted { $0.title < $1.title }
+        let expectedSorted = combined.sorted { $0.title.localizedCompare($1.title) == .orderedAscending }
         #expect(resultArticles == expectedSorted)
     }
 
