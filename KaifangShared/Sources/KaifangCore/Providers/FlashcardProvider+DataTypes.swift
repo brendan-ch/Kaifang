@@ -92,7 +92,7 @@ public extension FlashcardProvider {
         
         // MARK: Transformations
         
-        func reviewed(option: ReviewRating) -> Self {
+        func reviewed(option: ReviewRating, with scheduler: FlashcardScheduler) -> Self {
             // apply the spaced repetition algorithm
             return self
         }
@@ -157,13 +157,14 @@ public extension FlashcardProvider {
     }
     
 
-    enum ReviewRating: Int {
+    enum ReviewRating: Int, Sendable {
         case again
         case hard
         case good
         case easy
     }
-
+    
+    /// A pure flashcard scheduler.
     struct FlashcardCreateArguments: Sendable {
         let originalWord: String
         let originalContext: String?

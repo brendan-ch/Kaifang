@@ -11,6 +11,10 @@ import CoreData
 
 @Suite(.serialized)
 struct FlashcardTests {
+    // MARK: Type aliases
+    typealias Flashcard = FlashcardProvider.Flashcard
+    typealias ReviewRating = FlashcardProvider.ReviewRating
+    
     // MARK: Setup
     
     private let context: NSManagedObjectContext
@@ -21,13 +25,13 @@ struct FlashcardTests {
     
     // MARK: Transformation tests
     
-    @Test("Marking the flashcard as reviewed returns a new flashcard with updated metadata")
-    func markingFlashcardAsReviewedReturnsFlashcardWithUpdatedMetadata() async throws {
-        
-    }
-    
-    @Test("Performing a translation transform with a translation provider returns a new flashcard with an updated translation")
-    func translationTransformReturnsNewFlashcardWithUpdatedTranslation() async throws {
+    @Test(
+        "Marking the flashcard as reviewed returns a new flashcard with updated metadata",
+        arguments: [ReviewRating.again, .hard, .good, .easy]
+    )
+    func markingFlashcardAsReviewedReturnsFlashcardWithUpdatedMetadata(
+        case: ReviewRating
+    ) async throws {
         
     }
 }
