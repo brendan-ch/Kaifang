@@ -11,6 +11,6 @@ import CoreData
 public class CDFlashcard: CDEntityWithIDAndDateMetadata {
     public override func awakeFromInsert() {
         super.awakeFromInsert()
-        self.dueDate = Date()
+        self.due = Date()
     }
 }

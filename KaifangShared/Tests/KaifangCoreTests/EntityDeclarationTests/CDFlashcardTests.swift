@@ -14,7 +14,7 @@ struct CDFlashcardTests {
         let context = try PersistenceController.getTestingContext()
         
         let card = CDFlashcard(context: context)
-        #expect(card.dueDate != nil)
-        #expect(card.dueDate!.isCloseToNow())
+        #expect(card.due != nil)
+        #expect(card.due!.isCloseToNow())
     }
 }
