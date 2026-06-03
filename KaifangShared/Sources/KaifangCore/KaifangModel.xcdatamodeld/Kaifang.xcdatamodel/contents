@@ -48,9 +48,10 @@
         <attribute name="interval" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="lastReviewedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="originalContext" optional="YES" attributeType="String" allowsCloudEncryption="YES"/>
+        <attribute name="originalTextLangRaw" optional="YES" attributeType="String"/>
         <attribute name="originalWord" attributeType="String" defaultValueString="Empty word" allowsCloudEncryption="YES"/>
         <attribute name="repetitions" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="wordTranslation" optional="YES" attributeType="String" allowsCloudEncryption="YES"/>
+        <attribute name="translatedTextLangRaw" optional="YES" attributeType="String"/>
         <relationship name="sentenceToken" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDArticleSentenceToken" inverseName="flashcards" inverseEntity="CDArticleSentenceToken"/>
     </entity>
     <entity name="CDTag" representedClassName="CDTag" parentEntity="CDEntityWithIDAndDateMetadata" syncable="YES" codeGenerationType="category">

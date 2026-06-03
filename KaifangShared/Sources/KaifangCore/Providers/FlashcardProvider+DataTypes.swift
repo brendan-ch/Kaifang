@@ -10,6 +10,7 @@ import Foundation
 public extension FlashcardProvider {
     /// Maps to ``CDFlashcard``.
     struct Flashcard: Equatable, Sendable {
+        // MARK: Properties
         let id: UUID
         
         let dueDate: Date
@@ -22,20 +23,25 @@ public extension FlashcardProvider {
         /// If the information exists, it can be used to link back to that token.
         let sentenceToken: SegmentationProvider.SentenceToken?
         
-        let originalWord: String
-        let originalContext: String?
-        let wordTranslation: String?
-        let contextTranslation: String?
+        // map to translation lookup arguments
+        let originalText: String
+        let originalTextContext: String?
+        let originalTextLang: Locale.Language
+        let translatedTextLang: Locale.Language
         
         let dateCreated: Date
         let dateModified: Date
+        
+        // MARK: Creation
         
         static func fromCoreData(_ coreData: CDFlashcard) throws -> Self {
             guard let id = coreData.id,
                   let dueDate = coreData.dueDate,
                   let originalWord = coreData.originalWord,
                   let dateCreated = coreData.dateCreated,
-                  let dateModified = coreData.dateModified else {
+                  let dateModified = coreData.dateModified,
+                  let originalTextLangRaw = coreData.originalTextLangRaw,
+                  let translatedTextLangRaw = coreData.translatedTextLangRaw else {
                 throw Error.failedConversionToDomainModel
             }
             
@@ -54,10 +60,10 @@ public extension FlashcardProvider {
                 lastReviewedAt: coreData.lastReviewedAt,
                 repetitions: coreData.repetitions,
                 sentenceToken: sentenceToken,
-                originalWord: originalWord,
-                originalContext: coreData.originalContext,
-                wordTranslation: coreData.wordTranslation,
-                contextTranslation: coreData.contextTranslation,
+                originalText: originalWord,
+                originalTextContext: coreData.originalContext,
+                originalTextLang: Locale.Language(identifier: originalTextLangRaw),
+                translatedTextLang: Locale.Language(identifier: translatedTextLangRaw),
                 dateCreated: dateCreated,
                 dateModified: dateModified
             )
@@ -72,21 +78,29 @@ public extension FlashcardProvider {
                 lastReviewedAt: nil,
                 repetitions: 0,
                 sentenceToken: args.sentenceToken,
-                originalWord: args.originalWord,
-                originalContext: args.originalContext,
-                wordTranslation: args.wordTranslation,
-                contextTranslation: args.contextTranslation,
+                originalText: args.originalWord,
+                originalTextContext: args.originalContext,
+                originalTextLang: args.originalTextLang,
+                translatedTextLang: args.translatedTextLang,
                 dateCreated: Date(),
                 dateModified: Date()
             )
         }
+        
+        // MARK: Transformations
+        
+        func reviewed(option: ReviewOption) -> Self {
+            // apply the spaced repetition algorithm
+            return self
+        }
+        
     }
     
     struct FlashcardCreateArguments: Sendable {
         let originalWord: String
         let originalContext: String?
-        let wordTranslation: String?
-        let contextTranslation: String?
+        let originalTextLang: Locale.Language
+        let translatedTextLang: Locale.Language
         let sentenceToken: SegmentationProvider.SentenceToken?
     }
     
@@ -106,6 +120,13 @@ public extension FlashcardProvider {
         case dueDate(SortOrder)
         case dateModified(SortOrder)
         case dateCreated(SortOrder)
+    }
+    
+    enum ReviewOption: Sendable {
+        case again
+        case hard
+        case good
+        case easy
     }
     
     enum Error: Swift.Error, LocalizedError {
