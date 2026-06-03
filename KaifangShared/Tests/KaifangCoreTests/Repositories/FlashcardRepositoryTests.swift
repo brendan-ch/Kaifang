@@ -251,21 +251,88 @@ struct FlashcardRepositoryTests {
     // MARK: Finding and lookup
     @Test("Finding a flashcard returns from storage")
     func findReturnsFromStorage() async throws {
+        let flashcards = getSampleFlashcards()
+        
+        for flashcard in flashcards {
+            let expectedFlashcard = try await repository.save(flashcard)
+            let resultFlashcard = try await repository.find(flashcard.id)
+            #expect(expectedFlashcard == resultFlashcard)
+        }
     }
     
     @Test("Finding a flashcard returns nil if not found")
     func findReturnsNilIfNotFound() async throws {
-        
+        let resultFlashcard = try await repository.find(UUID())
+        #expect(resultFlashcard == nil)
     }
     
     // MARK: Listing, filtering and sorting
-    @Test("Different filtering options return the expected outputs")
-    func filterOptionsReturnExpectedOutputs() async throws {
+    struct FilterCase: Sendable {
+        let name: String
+        let filterBy: @Sendable (Flashcard) -> Bool
+        let criteria: FilterArguments
+    }
+    
+    @Test(
+        "Different filtering options return the expected outputs",
+        arguments: [
+            FilterCase(
+                name: "Filter by article ID returns blank array if no article ID",
+                filterBy: { _ in false },
+                criteria: FilterArguments(
+                    articleId: UUID(),
+                    dueOnly: nil,
+                    contents: nil
+                )
+            )
+        ]
+    )
+    func filterOptionsReturnExpectedOutputs(filterCase: FilterCase) async throws {
         
     }
     
-    @Test("Different sorting options return the expected outputs")
-    func sortOptionsReturnExpectedOutputs() async throws {
+    struct SortCase: Sendable {
+        let name: String
+        let sortBy: @Sendable (Flashcard, Flashcard) -> Bool
+        let criteria: SortCriteria
+    }
+    
+    @Test(
+        "Different sorting options return the expected outputs",
+        arguments: [
+            SortCase(
+                name: "Sorting by ascending due date returns earliest due dates first",
+                sortBy: { $0.dueDate > $1.dueDate },
+                criteria: .dueDate(.forward),
+            ),
+            SortCase(
+                name: "Sorting by descending due date returns latest due dates first",
+                sortBy: { $0.dueDate < $1.dueDate },
+                criteria: .dueDate(.reverse)
+            ),
+            SortCase(
+                name: "Sorting by ascending date modified returns least recently modified first",
+                sortBy: { $0.dateModified < $1.dateModified },
+                criteria: .dateModified(.forward)
+            ),
+            SortCase(
+                name: "Sorting by descending date modified returns most recently modified first",
+                sortBy: { $0.dateModified > $1.dateModified },
+                criteria: .dateModified(.reverse)
+            ),
+            SortCase(
+                name: "Sorting by ascending date created returns oldest first",
+                sortBy: { $0.dateCreated < $1.dateCreated },
+                criteria: .dateModified(.reverse)
+            ),
+            SortCase(
+                name: "Sorting by descending date created returns newest first",
+                sortBy: { $0.dateCreated > $1.dateCreated },
+                criteria: .dateModified(.reverse)
+            ),
+        ]
+    )
+    func sortOptionsReturnExpectedOutputs(sortCase: SortCase) async throws {
         
     }
     
