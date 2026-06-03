@@ -9,7 +9,7 @@ import Foundation
 
 public extension FlashcardProvider {
     /// Maps to ``CDFlashcard``.
-    struct Flashcard {
+    struct Flashcard: Equatable, Sendable {
         let id: UUID
         
         let dueDate: Date
@@ -82,7 +82,7 @@ public extension FlashcardProvider {
         }
     }
     
-    struct FlashcardCreateArguments {
+    struct FlashcardCreateArguments: Sendable {
         let originalWord: String
         let originalContext: String?
         let wordTranslation: String?
@@ -90,10 +90,10 @@ public extension FlashcardProvider {
         let sentenceToken: SegmentationProvider.SentenceToken?
     }
     
-    struct FilterArguments {
+    struct FilterArguments: Sendable {
         /// When passed, only return flashcards for the given article.
         /// Returns an empty list if the article doesn't exist.
-        let articleId: String?
+        let articleId: UUID?
         
         /// Filter to only flashcards that are due.
         let dueOnly: Bool?
