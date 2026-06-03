@@ -92,11 +92,51 @@ public extension FlashcardProvider {
         
         // MARK: Transformations
         
-        func reviewed(option: ReviewOption) -> Self {
+        func reviewed(option: ReviewRating) -> Self {
             // apply the spaced repetition algorithm
             return self
         }
         
+    }
+    
+    /// Maps to ``CDFlashcardReview``.
+    /// Tracks properties for a deterministic replay of all flashcard reviews.
+    struct FlashcardReview {
+        // MARK: Properties
+        let id: UUID
+        let flashcardUUID: UUID
+        
+        let reviewedAt: Date
+        let difficultyBefore: Double
+        let stabilityBefore: Double
+        let stateBefore: ReviewState
+        let rating: ReviewRating
+        let elapsedDays: Double
+        let scheduledDays: Double
+        let reviewDurationMs: Int32
+        
+        static func fromCoreData(_ coreData: CDFlashcardReview) throws -> Self {
+            guard let id = coreData.id,
+                  let reviewedAt = coreData.reviewedAt,
+                  let stateBefore = ReviewState(rawValue: Int(coreData.stateBeforeRaw)),
+                  let rating = ReviewRating(rawValue: Int(coreData.ratingRaw)),
+                  let flashcardUUID = coreData.flashcardUUID else {
+                throw Error.failedConversionToDomainModel
+            }
+            
+            return FlashcardReview(
+                id: id,
+                flashcardUUID: flashcardUUID,
+                reviewedAt: reviewedAt,
+                difficultyBefore: coreData.difficultyBefore,
+                stabilityBefore: coreData.stabilityBefore,
+                stateBefore: stateBefore,
+                rating: rating,
+                elapsedDays: coreData.elapsedDays,
+                scheduledDays: coreData.scheduledDays,
+                reviewDurationMs: coreData.reviewDurationMs
+            )
+        }
     }
     
     struct SpacedRepetitionMetadata: Equatable, Sendable {
@@ -117,7 +157,7 @@ public extension FlashcardProvider {
     }
     
 
-    enum ReviewOption: Sendable {
+    enum ReviewRating: Int {
         case again
         case hard
         case good

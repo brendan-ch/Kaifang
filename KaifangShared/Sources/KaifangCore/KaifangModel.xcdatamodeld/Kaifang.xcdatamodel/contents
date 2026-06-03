@@ -56,6 +56,17 @@
         <attribute name="translatedTextLangRaw" optional="YES" attributeType="String"/>
         <relationship name="sentenceToken" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDArticleSentenceToken" inverseName="flashcards" inverseEntity="CDArticleSentenceToken"/>
     </entity>
+    <entity name="CDFlashcardReview" representedClassName="CDFlashcardReview" parentEntity="CDEntityWithIDAndDateMetadata" syncable="YES" codeGenerationType="category">
+        <attribute name="difficultyBefore" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="elapsedDays" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="flashcardUUID" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="ratingRaw" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="reviewDurationMs" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="reviewedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="scheduledDays" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="stabilityBefore" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="stateBeforeRaw" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+    </entity>
     <entity name="CDTag" representedClassName="CDTag" parentEntity="CDEntityWithIDAndDateMetadata" syncable="YES" codeGenerationType="category">
         <attribute name="name" optional="YES" attributeType="String" allowsCloudEncryption="YES"/>
         <relationship name="articles" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="CDBaseArticle" inverseName="tags" inverseEntity="CDBaseArticle"/>
@@ -74,6 +85,7 @@
         <memberEntity name="CDFlashcard"/>
         <memberEntity name="CDTag"/>
         <memberEntity name="CDAuthor"/>
+        <memberEntity name="CDFlashcardReview"/>
     </configuration>
     <configuration name="Local">
         <memberEntity name="CDTranslationModelCredential"/>
