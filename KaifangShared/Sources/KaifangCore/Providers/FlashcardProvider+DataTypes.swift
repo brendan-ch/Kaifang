@@ -12,13 +12,8 @@ public extension FlashcardProvider {
     struct Flashcard: Equatable, Sendable {
         // MARK: Properties
         let id: UUID
-        
-        let dueDate: Date
-        let easeFactor: Double
-        let interval: Int32
-        let lastReviewedAt: Date?
-        let repetitions: Int32
-        
+        let spacedRepetitionMetadata: SpacedRepetitionMetadata
+
         /// The sentence token from which the flashcard was saved.
         /// If the information exists, it can be used to link back to that token.
         let sentenceToken: SegmentationProvider.SentenceToken?
@@ -36,7 +31,7 @@ public extension FlashcardProvider {
         
         static func fromCoreData(_ coreData: CDFlashcard) throws -> Self {
             guard let id = coreData.id,
-                  let dueDate = coreData.dueDate,
+                  let due = coreData.due,
                   let originalWord = coreData.originalWord,
                   let dateCreated = coreData.dateCreated,
                   let dateModified = coreData.dateModified,
@@ -54,11 +49,15 @@ public extension FlashcardProvider {
             
             return Flashcard(
                 id: id,
-                dueDate: dueDate,
-                easeFactor: coreData.easeFactor,
-                interval: coreData.interval,
-                lastReviewedAt: coreData.lastReviewedAt,
-                repetitions: coreData.repetitions,
+                spacedRepetitionMetadata: .init(
+                    due: due,
+                    lastReviewedAt: coreData.lastReviewedAt,
+                    reviewState: ReviewState(rawValue: Int(coreData.reviewStateRaw)) ?? .new,
+                    stability: coreData.stability,
+                    difficulty: coreData.difficulty,
+                    repetitions: coreData.repetitions,
+                    lapses: coreData.lapses
+                ),
                 sentenceToken: sentenceToken,
                 originalText: originalWord,
                 originalTextContext: coreData.originalContext,
@@ -72,11 +71,15 @@ public extension FlashcardProvider {
         static func fromCreateArgs(_ args: FlashcardCreateArguments) -> Self {
             return Flashcard(
                 id: UUID(),
-                dueDate: Date(),
-                easeFactor: 2.5,
-                interval: 0,
-                lastReviewedAt: nil,
-                repetitions: 0,
+                spacedRepetitionMetadata: .init(
+                    due: Date(),
+                    lastReviewedAt: nil,
+                    reviewState: .new,
+                    stability: nil,
+                    difficulty: nil,
+                    repetitions: 0,
+                    lapses: 0
+                ),
                 sentenceToken: args.sentenceToken,
                 originalText: args.originalWord,
                 originalTextContext: args.originalContext,
@@ -96,6 +99,31 @@ public extension FlashcardProvider {
         
     }
     
+    struct SpacedRepetitionMetadata: Equatable, Sendable {
+        let due: Date
+        let lastReviewedAt: Date?
+        let reviewState: ReviewState
+        let stability: Double?
+        let difficulty: Double?
+        let repetitions: Int32
+        let lapses: Int32
+    }
+    
+    enum ReviewState: Int, Sendable {
+        case new
+        case learning
+        case review
+        case relearning
+    }
+    
+
+    enum ReviewOption: Sendable {
+        case again
+        case hard
+        case good
+        case easy
+    }
+
     struct FlashcardCreateArguments: Sendable {
         let originalWord: String
         let originalContext: String?
@@ -122,12 +150,6 @@ public extension FlashcardProvider {
         case dateCreated(SortOrder)
     }
     
-    enum ReviewOption: Sendable {
-        case again
-        case hard
-        case good
-        case easy
-    }
     
     enum Error: Swift.Error, LocalizedError {
         case failedConversionToDomainModel
