@@ -180,7 +180,7 @@ public extension FlashcardProvider {
         /// Filter to only flashcards that are due.
         let dueOnly: Bool?
         
-        /// Filter by the contents of the flashcard (original word, context, translation + context translation).
+        /// Filter by the contents of the flashcard (its original word and surrounding context).
         let contents: String?
     }
     

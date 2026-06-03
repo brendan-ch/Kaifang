@@ -146,24 +146,35 @@ struct FlashcardRepositoryTests {
         let createdOffsets: [TimeInterval] = [-7.0, -6.0, -5.0, -4.0, -3.0, -2.0, -1.0, 0.0]
         let modifiedOffsets: [TimeInterval] = [-0.007, -0.006, -0.005, -0.004, -0.003, -0.002, -0.001, 0.000]
 
-        // Keyword map for the `contents` filter test. Each test keyword hits exactly one fixture,
-        // so expected hit-counts are computable directly from the fixture set.
-        //   "buses"    → Alpha 1 originalContext only
-        //   "council"  → Alpha 1 wordTranslation + contextTranslation (still single fixture)
-        //   "flow"     → Alpha 2 contextTranslation only (English-side hit)
-        //   "quantum"  → Bravo 1 originalContext only
-        //   "舞蹈"      → Charlie 1 originalWord + originalContext (CJK in both)
-        //   "街頭"      → Charlie 1 originalContext only (CJK in context, not word)
-        //   "jot"      → Orphan 1 originalContext only (orphan, no article link)
+        // Keyword map for the `contents` filter test, which searches `originalText` +
+        // `originalTextContext` only (translations are no longer stored on the card). Each keyword
+        // hits exactly one fixture, so expected hit-counts are computable directly from the set.
+        // Latin keywords are embedded in the original-language context sentences.
+        //   "buses"     → Alpha 1   (Latin, in context)
+        //   "region"    → Alpha 2   (Latin, in context)
+        //   "试运营"      → Alpha 3   (CJK; no Latin in this card)
+        //   "quantum"   → Bravo 1   (Latin, in context)
+        //   "糾錯"        → Bravo 2   (CJK; context is nil)
+        //   "dance"     → Charlie 1 (Latin, in context)
+        //   "liquidity" → Orphan 1  (Latin, in context)
+        //   "宁静"        → Orphan 2  (CJK; context is nil)
+        //
+        // The FSRS state below (reviewState/stability/difficulty/lapses) is hand-picked to be
+        // plausible for each card's narrative — it is NOT the output of running the scheduler.
+        // New cards leave stability/difficulty nil to match `Flashcard.fromCreateArgs`.
         return [
             // Alpha 1 — newly captured from a news article, never reviewed yet.
             Flashcard(
                 id: UUID(),
-                dueDate: nowReference.addingTimeInterval(-2 * 86_400),
-                easeFactor: 2.5,
-                interval: 0,
-                lastReviewedAt: nil,
-                repetitions: 0,
+                spacedRepetitionMetadata: .init(
+                    due: nowReference.addingTimeInterval(-2 * 86_400),
+                    lastReviewedAt: nil,
+                    reviewState: .new,
+                    stability: nil,
+                    difficulty: nil,
+                    repetitions: 0,
+                    lapses: 0
+                ),
                 sentenceToken: SentenceToken(
                     id: UUID(),
                     articleId: alphaArticleId,
@@ -174,21 +185,25 @@ struct FlashcardRepositoryTests {
                         WordToken(id: UUID(), tokenText: "市议会", sentenceTextPositionStart: 0, wordIndexInSentence: 0)
                     ]
                 ),
-                originalWord: "市议会",
-                originalContext: "市议会一致通过新型 buses 巴士拨款议案。",
-                wordTranslation: "city council",
-                contextTranslation: "The city council unanimously approved the new bus funding bill.",
+                originalText: "市议会",
+                originalTextContext: "市议会一致通过新型 buses 巴士拨款议案。",
+                originalTextLang: Locale.Language(identifier: "zh-Hans-CN"),
+                translatedTextLang: Locale.Language(identifier: "en-US"),
                 dateCreated: nowReference.addingTimeInterval(createdOffsets[0]),
                 dateModified: nowReference.addingTimeInterval(modifiedOffsets[0])
             ),
-            // Alpha 2 — struggling card from the same article: failed it once, low ease, learning phase.
+            // Alpha 2 — struggling card from the same article: still in the learning phase.
             Flashcard(
                 id: UUID(),
-                dueDate: nowReference.addingTimeInterval(3 * 86_400),
-                easeFactor: 1.7,
-                interval: 1,
-                lastReviewedAt: nowReference.addingTimeInterval(-86_400),
-                repetitions: 1,
+                spacedRepetitionMetadata: .init(
+                    due: nowReference.addingTimeInterval(3 * 86_400),
+                    lastReviewedAt: nowReference.addingTimeInterval(-86_400),
+                    reviewState: .learning,
+                    stability: 0.8,
+                    difficulty: 7.0,
+                    repetitions: 1,
+                    lapses: 0
+                ),
                 sentenceToken: SentenceToken(
                     id: UUID(),
                     articleId: alphaArticleId,
@@ -199,21 +214,25 @@ struct FlashcardRepositoryTests {
                         WordToken(id: UUID(), tokenText: "公共交通", sentenceTextPositionStart: 18, wordIndexInSentence: 7)
                     ]
                 ),
-                originalWord: "公共交通",
-                originalContext: "该决议将覆盖整个 region 城区的公共交通时间表。",
-                wordTranslation: "public transit",
-                contextTranslation: "The resolution covers public transit schedules across the entire flow region.",
+                originalText: "公共交通",
+                originalTextContext: "该决议将覆盖整个 region 城区的公共交通时间表。",
+                originalTextLang: Locale.Language(identifier: "zh-Hans-CN"),
+                translatedTextLang: Locale.Language(identifier: "en-US"),
                 dateCreated: nowReference.addingTimeInterval(createdOffsets[1]),
                 dateModified: nowReference.addingTimeInterval(modifiedOffsets[1])
             ),
-            // Alpha 3 — same article, two reviews in, mid ease, contextTranslation not filled in yet.
+            // Alpha 3 — same article, two reviews in, mid difficulty, comfortably in review.
             Flashcard(
                 id: UUID(),
-                dueDate: nowReference.addingTimeInterval(-1 * 86_400),
-                easeFactor: 2.3,
-                interval: 1,
-                lastReviewedAt: nowReference.addingTimeInterval(-2 * 86_400),
-                repetitions: 2,
+                spacedRepetitionMetadata: .init(
+                    due: nowReference.addingTimeInterval(-1 * 86_400),
+                    lastReviewedAt: nowReference.addingTimeInterval(-2 * 86_400),
+                    reviewState: .review,
+                    stability: 2.5,
+                    difficulty: 5.5,
+                    repetitions: 2,
+                    lapses: 0
+                ),
                 sentenceToken: SentenceToken(
                     id: UUID(),
                     articleId: alphaArticleId,
@@ -224,21 +243,25 @@ struct FlashcardRepositoryTests {
                         WordToken(id: UUID(), tokenText: "试运营", sentenceTextPositionStart: 9, wordIndexInSentence: 5)
                     ]
                 ),
-                originalWord: "试运营",
-                originalContext: "下周起新线路开始试运营。",
-                wordTranslation: "trial operation",
-                contextTranslation: nil,
+                originalText: "试运营",
+                originalTextContext: "下周起新线路开始试运营。",
+                originalTextLang: Locale.Language(identifier: "zh-Hans-CN"),
+                translatedTextLang: Locale.Language(identifier: "en-US"),
                 dateCreated: nowReference.addingTimeInterval(createdOffsets[2]),
                 dateModified: nowReference.addingTimeInterval(modifiedOffsets[2])
             ),
-            // Bravo 1 — from a tech/quantum article (TC). Review phase, default ease, six-day interval.
+            // Bravo 1 — from a tech/quantum article (TC). Review phase, mid difficulty, ~6-day stability.
             Flashcard(
                 id: UUID(),
-                dueDate: nowReference.addingTimeInterval(7 * 86_400),
-                easeFactor: 2.5,
-                interval: 6,
-                lastReviewedAt: nowReference.addingTimeInterval(-86_400),
-                repetitions: 4,
+                spacedRepetitionMetadata: .init(
+                    due: nowReference.addingTimeInterval(7 * 86_400),
+                    lastReviewedAt: nowReference.addingTimeInterval(-86_400),
+                    reviewState: .review,
+                    stability: 6.0,
+                    difficulty: 5.0,
+                    repetitions: 4,
+                    lapses: 0
+                ),
                 sentenceToken: SentenceToken(
                     id: UUID(),
                     articleId: bravoArticleId,
@@ -249,22 +272,26 @@ struct FlashcardRepositoryTests {
                         WordToken(id: UUID(), tokenText: "量子", sentenceTextPositionStart: 24, wordIndexInSentence: 10)
                     ]
                 ),
-                originalWord: "量子",
-                originalContext: "研究團隊在會議上展示了穩定的 quantum 量子處理器原型。",
-                wordTranslation: "quantum",
-                contextTranslation: nil,
+                originalText: "量子",
+                originalTextContext: "研究團隊在會議上展示了穩定的 quantum 量子處理器原型。",
+                originalTextLang: Locale.Language(identifier: "zh-Hant-TW"),
+                translatedTextLang: Locale.Language(identifier: "en-US"),
                 dateCreated: nowReference.addingTimeInterval(createdOffsets[3]),
                 dateModified: nowReference.addingTimeInterval(modifiedOffsets[3])
             ),
-            // Bravo 2 — mature card from same article, high ease, originalContext intentionally
+            // Bravo 2 — mature card from same article, low difficulty, originalTextContext intentionally
             // omitted to model "I trimmed the context after I knew the word cold."
             Flashcard(
                 id: UUID(),
-                dueDate: nowReference.addingTimeInterval(30 * 86_400),
-                easeFactor: 2.9,
-                interval: 14,
-                lastReviewedAt: nowReference.addingTimeInterval(-7 * 86_400),
-                repetitions: 5,
+                spacedRepetitionMetadata: .init(
+                    due: nowReference.addingTimeInterval(30 * 86_400),
+                    lastReviewedAt: nowReference.addingTimeInterval(-7 * 86_400),
+                    reviewState: .review,
+                    stability: 25.0,
+                    difficulty: 3.0,
+                    repetitions: 5,
+                    lapses: 0
+                ),
                 sentenceToken: SentenceToken(
                     id: UUID(),
                     articleId: bravoArticleId,
@@ -275,21 +302,25 @@ struct FlashcardRepositoryTests {
                         WordToken(id: UUID(), tokenText: "糾錯", sentenceTextPositionStart: 12, wordIndexInSentence: 8)
                     ]
                 ),
-                originalWord: "糾錯",
-                originalContext: nil,
-                wordTranslation: "error correction",
-                contextTranslation: nil,
+                originalText: "糾錯",
+                originalTextContext: nil,
+                originalTextLang: Locale.Language(identifier: "zh-Hant-TW"),
+                translatedTextLang: Locale.Language(identifier: "en-US"),
                 dateCreated: nowReference.addingTimeInterval(createdOffsets[4]),
                 dateModified: nowReference.addingTimeInterval(modifiedOffsets[4])
             ),
             // Charlie 1 — culture article (TC), brand new, never reviewed, due right now.
             Flashcard(
                 id: UUID(),
-                dueDate: nowReference,
-                easeFactor: 2.0,
-                interval: 0,
-                lastReviewedAt: nil,
-                repetitions: 0,
+                spacedRepetitionMetadata: .init(
+                    due: nowReference,
+                    lastReviewedAt: nil,
+                    reviewState: .new,
+                    stability: nil,
+                    difficulty: nil,
+                    repetitions: 0,
+                    lapses: 0
+                ),
                 sentenceToken: SentenceToken(
                     id: UUID(),
                     articleId: charlieArticleId,
@@ -300,42 +331,50 @@ struct FlashcardRepositoryTests {
                         WordToken(id: UUID(), tokenText: "舞蹈", sentenceTextPositionStart: 9, wordIndexInSentence: 2)
                     ]
                 ),
-                originalWord: "舞蹈",
-                originalContext: "傳統 dance 舞蹈與街頭藝術在開幕表演中亮相。",
-                wordTranslation: "dance",
-                contextTranslation: "Traditional dance and street art appeared in the opening performance.",
+                originalText: "舞蹈",
+                originalTextContext: "傳統 dance 舞蹈與街頭藝術在開幕表演中亮相。",
+                originalTextLang: Locale.Language(identifier: "zh-Hant-TW"),
+                translatedTextLang: Locale.Language(identifier: "en-US"),
                 dateCreated: nowReference.addingTimeInterval(createdOffsets[5]),
                 dateModified: nowReference.addingTimeInterval(modifiedOffsets[5])
             ),
-            // Orphan 1 — manually jotted down outside any article, kept being forgotten (ease 1.3).
+            // Orphan 1 — manually jotted down outside any article, kept being forgotten (relearning).
             Flashcard(
                 id: UUID(),
-                dueDate: nowReference.addingTimeInterval(-5 * 86_400),
-                easeFactor: 1.3,
-                interval: 30,
-                lastReviewedAt: nowReference.addingTimeInterval(-3 * 86_400),
-                repetitions: 8,
+                spacedRepetitionMetadata: .init(
+                    due: nowReference.addingTimeInterval(-5 * 86_400),
+                    lastReviewedAt: nowReference.addingTimeInterval(-3 * 86_400),
+                    reviewState: .relearning,
+                    stability: 9.0,
+                    difficulty: 9.5,
+                    repetitions: 8,
+                    lapses: 4
+                ),
                 sentenceToken: nil,
-                originalWord: "流动性",
-                originalContext: "I want to jot this down — the liquidity story is everywhere.",
-                wordTranslation: "liquidity",
-                contextTranslation: nil,
+                originalText: "流动性",
+                originalTextContext: "市场的 liquidity 流动性问题随处可见。",
+                originalTextLang: Locale.Language(identifier: "zh-Hans-CN"),
+                translatedTextLang: Locale.Language(identifier: "en-US"),
                 dateCreated: nowReference.addingTimeInterval(createdOffsets[6]),
                 dateModified: nowReference.addingTimeInterval(modifiedOffsets[6])
             ),
-            // Orphan 2 — manually added long ago, very mature, no translations filled in.
+            // Orphan 2 — manually added long ago, very mature, no context filled in.
             Flashcard(
                 id: UUID(),
-                dueDate: nowReference.addingTimeInterval(14 * 86_400),
-                easeFactor: 3.2,
-                interval: 90,
-                lastReviewedAt: nowReference.addingTimeInterval(-30 * 86_400),
-                repetitions: 12,
+                spacedRepetitionMetadata: .init(
+                    due: nowReference.addingTimeInterval(14 * 86_400),
+                    lastReviewedAt: nowReference.addingTimeInterval(-30 * 86_400),
+                    reviewState: .review,
+                    stability: 90.0,
+                    difficulty: 2.0,
+                    repetitions: 12,
+                    lapses: 0
+                ),
                 sentenceToken: nil,
-                originalWord: "宁静",
-                originalContext: nil,
-                wordTranslation: nil,
-                contextTranslation: nil,
+                originalText: "宁静",
+                originalTextContext: nil,
+                originalTextLang: Locale.Language(identifier: "zh-Hans-CN"),
+                translatedTextLang: Locale.Language(identifier: "en-US"),
                 dateCreated: nowReference.addingTimeInterval(createdOffsets[7]),
                 dateModified: nowReference.addingTimeInterval(modifiedOffsets[7])
             ),
@@ -396,12 +435,12 @@ struct FlashcardRepositoryTests {
         arguments: [
             SortCase(
                 name: "Sorting by ascending due date returns earliest due dates first",
-                sortBy: { $0.dueDate > $1.dueDate },
+                sortBy: { $0.spacedRepetitionMetadata.due < $1.spacedRepetitionMetadata.due },
                 criteria: .dueDate(.forward),
             ),
             SortCase(
                 name: "Sorting by descending due date returns latest due dates first",
-                sortBy: { $0.dueDate < $1.dueDate },
+                sortBy: { $0.spacedRepetitionMetadata.due > $1.spacedRepetitionMetadata.due },
                 criteria: .dueDate(.reverse)
             ),
             SortCase(
@@ -417,12 +456,12 @@ struct FlashcardRepositoryTests {
             SortCase(
                 name: "Sorting by ascending date created returns oldest first",
                 sortBy: { $0.dateCreated < $1.dateCreated },
-                criteria: .dateModified(.reverse)
+                criteria: .dateCreated(.forward)
             ),
             SortCase(
                 name: "Sorting by descending date created returns newest first",
                 sortBy: { $0.dateCreated > $1.dateCreated },
-                criteria: .dateModified(.reverse)
+                criteria: .dateCreated(.reverse)
             ),
         ]
     )
