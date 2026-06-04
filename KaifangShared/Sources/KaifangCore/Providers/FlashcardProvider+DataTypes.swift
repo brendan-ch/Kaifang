@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import KaifangSpacedRepetition
 
 public extension FlashcardProvider {
     /// Maps to ``CDFlashcard``.
@@ -56,7 +57,9 @@ public extension FlashcardProvider {
                     stability: coreData.stability,
                     difficulty: coreData.difficulty,
                     repetitions: coreData.repetitions,
-                    lapses: coreData.lapses
+                    lapses: coreData.lapses,
+                    scheduledDays: coreData.scheduledDays,
+                    learningStep: Int32(coreData.learningStepIndex)
                 ),
                 sentenceToken: sentenceToken,
                 originalText: originalWord,
@@ -78,7 +81,9 @@ public extension FlashcardProvider {
                     stability: nil,
                     difficulty: nil,
                     repetitions: 0,
-                    lapses: 0
+                    lapses: 0,
+                    scheduledDays: 0,
+                    learningStep: 0
                 ),
                 sentenceToken: args.sentenceToken,
                 originalText: args.originalWord,
@@ -91,12 +96,8 @@ public extension FlashcardProvider {
         }
         
         // MARK: Transformations
-        
-        func reviewed(option: ReviewRating, with scheduler: FlashcardScheduler) -> Self {
-            // apply the spaced repetition algorithm
-            return self
-        }
-        
+        // See FlashcardProvider+FSRS.swift for `reviewed(rating:now:using:)`,
+        // which runs the FSRS engine and returns the updated card plus its log.
     }
     
     /// Maps to ``CDFlashcardReview``.
@@ -147,21 +148,30 @@ public extension FlashcardProvider {
         let difficulty: Double?
         let repetitions: Int32
         let lapses: Int32
+        /// The whole-day interval assigned at the last review. Maps to
+        /// `CDFlashcard.scheduledDays` and to the FSRS card's `scheduledDays`.
+        let scheduledDays: Int32
+        /// Index into the active learning/relearning step list. Maps to
+        /// `CDFlashcard.learningStepIndex` and to the FSRS card's `step`.
+        let learningStep: Int32
     }
-    
+
+    /// Mirrors ``KaifangSpacedRepetition/State`` (identical raw values).
     enum ReviewState: Int, Sendable {
         case new
         case learning
         case review
         case relearning
     }
-    
 
+    /// Mirrors ``KaifangSpacedRepetition/Rating``: one-based, so the bridge to
+    /// the FSRS engine is the identity on `rawValue`. (FSRS reserves 0 for a
+    /// manual grade not modelled here.)
     enum ReviewRating: Int, Sendable {
-        case again
-        case hard
-        case good
-        case easy
+        case again = 1
+        case hard = 2
+        case good = 3
+        case easy = 4
     }
     
     /// A pure flashcard scheduler.

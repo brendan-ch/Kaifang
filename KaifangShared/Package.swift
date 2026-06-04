@@ -16,9 +16,15 @@ let package = Package(
             targets: ["KaifangPresentation"]
         )
     ],
+    dependencies: [
+        .package(path: "KaifangSpacedRepetition")
+    ],
     targets: [
         .target(
             name: "KaifangCore",
+            dependencies: [
+                .product(name: "KaifangSpacedRepetition", package: "KaifangSpacedRepetition")
+            ],
             resources: [
                 .process("KaifangModel.xcdatamodeld"),
                 .copy("Resources/cedict_ts.u8"),

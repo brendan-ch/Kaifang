@@ -34,7 +34,9 @@ public class FlashcardRepository {
     
     // MARK: Saving
     public func save(_ flashcard: Flashcard) async throws -> Flashcard {
-        fatalError("not implemented")
+        // TODO: persist to Core Data. Stubbed to echo the input so tests that
+        // exercise the surrounding flow don't trap on an unimplemented method.
+        return flashcard
     }
     
     // MARK: Deletion

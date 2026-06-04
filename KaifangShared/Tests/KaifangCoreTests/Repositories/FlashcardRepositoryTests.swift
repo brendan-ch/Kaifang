@@ -173,7 +173,9 @@ struct FlashcardRepositoryTests {
                     stability: nil,
                     difficulty: nil,
                     repetitions: 0,
-                    lapses: 0
+                    lapses: 0,
+                    scheduledDays: 0,
+                    learningStep: 0
                 ),
                 sentenceToken: SentenceToken(
                     id: UUID(),
@@ -202,7 +204,9 @@ struct FlashcardRepositoryTests {
                     stability: 0.8,
                     difficulty: 7.0,
                     repetitions: 1,
-                    lapses: 0
+                    lapses: 0,
+                    scheduledDays: 0,
+                    learningStep: 0
                 ),
                 sentenceToken: SentenceToken(
                     id: UUID(),
@@ -231,7 +235,9 @@ struct FlashcardRepositoryTests {
                     stability: 2.5,
                     difficulty: 5.5,
                     repetitions: 2,
-                    lapses: 0
+                    lapses: 0,
+                    scheduledDays: 0,
+                    learningStep: 0
                 ),
                 sentenceToken: SentenceToken(
                     id: UUID(),
@@ -260,7 +266,9 @@ struct FlashcardRepositoryTests {
                     stability: 6.0,
                     difficulty: 5.0,
                     repetitions: 4,
-                    lapses: 0
+                    lapses: 0,
+                    scheduledDays: 0,
+                    learningStep: 0
                 ),
                 sentenceToken: SentenceToken(
                     id: UUID(),
@@ -290,7 +298,9 @@ struct FlashcardRepositoryTests {
                     stability: 25.0,
                     difficulty: 3.0,
                     repetitions: 5,
-                    lapses: 0
+                    lapses: 0,
+                    scheduledDays: 0,
+                    learningStep: 0
                 ),
                 sentenceToken: SentenceToken(
                     id: UUID(),
@@ -319,7 +329,9 @@ struct FlashcardRepositoryTests {
                     stability: nil,
                     difficulty: nil,
                     repetitions: 0,
-                    lapses: 0
+                    lapses: 0,
+                    scheduledDays: 0,
+                    learningStep: 0
                 ),
                 sentenceToken: SentenceToken(
                     id: UUID(),
@@ -348,7 +360,9 @@ struct FlashcardRepositoryTests {
                     stability: 9.0,
                     difficulty: 9.5,
                     repetitions: 8,
-                    lapses: 4
+                    lapses: 4,
+                    scheduledDays: 0,
+                    learningStep: 0
                 ),
                 sentenceToken: nil,
                 originalText: "流动性",
@@ -368,7 +382,9 @@ struct FlashcardRepositoryTests {
                     stability: 90.0,
                     difficulty: 2.0,
                     repetitions: 12,
-                    lapses: 0
+                    lapses: 0,
+                    scheduledDays: 0,
+                    learningStep: 0
                 ),
                 sentenceToken: nil,
                 originalText: "宁静",
